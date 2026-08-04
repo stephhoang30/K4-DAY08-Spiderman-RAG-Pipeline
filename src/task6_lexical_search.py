@@ -29,7 +29,6 @@ def build_bm25_index(corpus: list[dict]):
     Args:
         corpus: List of {'content': str, 'metadata': dict}
     """
-    # TODO: Implement BM25 index
     #
     from rank_bm25 import BM25Okapi
     #
@@ -46,7 +45,6 @@ def build_tf_idf_index(corpus: list[dict]):
     Args:
         corpus: List of {'content': str, 'metadata': dict}
     """
-    # TODO: Implement TF-IDF index
     tokenized_corpus = [doc["content"].lower().split() for doc in corpus]
     from sklearn.feature_extraction.text import TfidfVectorizer
     vectorizer = TfidfVectorizer()
@@ -70,7 +68,6 @@ def lexical_search(query: str, top_k: int = 10) -> list[dict]:
         }
         Sorted by score descending.
     """
-    # TODO: Implement lexical search
     #
     tokenized_query = query.lower().split()
     bm25 = build_bm25_index(CORPUS)
