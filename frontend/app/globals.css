@@ -1,0 +1,201 @@
+@import "tailwindcss";
+
+/* Dark mode được điều khiển bằng class `.dark` trên <html> (xem ThemeProvider). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* =========================================================================
+   DESIGN TOKENS — VinUniversity RAG Lab
+   Hai màu thương hiệu: đỏ #c72127, xanh #134d8b
+   ========================================================================= */
+@theme {
+  /* ---- Thang màu xanh thương hiệu (brand = 700) ---- */
+  --color-brand-blue-50: #eff5fb;
+  --color-brand-blue-100: #dbe8f6;
+  --color-brand-blue-200: #bdd6ee;
+  --color-brand-blue-300: #90bce2;
+  --color-brand-blue-400: #5c9bd1;
+  --color-brand-blue-500: #377cba;
+  --color-brand-blue-600: #26639d;
+  --color-brand-blue-700: #134d8b;
+  --color-brand-blue-800: #143f70;
+  --color-brand-blue-900: #15365d;
+  --color-brand-blue-950: #0e223e;
+
+  /* ---- Thang màu đỏ thương hiệu (brand = 600) ---- */
+  --color-brand-red-50: #fef2f2;
+  --color-brand-red-100: #fde3e3;
+  --color-brand-red-200: #fbcccd;
+  --color-brand-red-300: #f7a8a9;
+  --color-brand-red-400: #f07577;
+  --color-brand-red-500: #e44a4d;
+  --color-brand-red-600: #c72127;
+  --color-brand-red-700: #a81c21;
+  --color-brand-red-800: #8b1b1f;
+  --color-brand-red-900: #741d20;
+  --color-brand-red-950: #3f0b0d;
+}
+
+/* ---- Token ngữ nghĩa: light mode ---- */
+:root {
+  --bg: #f4f6f9;
+  --surface: #ffffff;
+  --surface-2: #f7f9fc;
+  --surface-3: #eef2f7;
+  --sidebar: #f8fafc;
+  --fg: #0f1a26;
+  --fg-muted: #4a5a6b;
+  --fg-subtle: #7b8a99;
+  --border: #dfe5ec;
+  --border-strong: #c6d0dc;
+  --accent: #134d8b;
+  --accent-hover: #143f70;
+  --accent-soft: #e7f0fa;
+  --accent-fg: #ffffff;
+  --danger: #c72127;
+  --danger-soft: #fdeaea;
+  --ok: #0f7b5f;
+  --ok-soft: #e2f5ee;
+  --warn: #a3620a;
+  --warn-soft: #fdf0dc;
+  --ring: #5c9bd1;
+
+  color-scheme: light;
+}
+
+/* ---- Token ngữ nghĩa: dark mode ---- */
+.dark {
+  --bg: #0b1017;
+  --surface: #121a24;
+  --surface-2: #172230;
+  --surface-3: #1e2b3b;
+  --sidebar: #0e151e;
+  --fg: #e8eef5;
+  --fg-muted: #a3b2c2;
+  --fg-subtle: #6f8091;
+  --border: #253345;
+  --border-strong: #33455b;
+  --accent: #5c9bd1;
+  --accent-hover: #90bce2;
+  --accent-soft: #16283d;
+  --accent-fg: #08121d;
+  --danger: #f07577;
+  --danger-soft: #331416;
+  --ok: #4ec9a4;
+  --ok-soft: #102a24;
+  --warn: #e0a84a;
+  --warn-soft: #2d2110;
+  --ring: #377cba;
+
+  color-scheme: dark;
+}
+
+/* ---- Map token sang utility Tailwind: bg-surface, text-fg-muted, border-border… ---- */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-sidebar: var(--sidebar);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-subtle: var(--fg-subtle);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-fg: var(--accent-fg);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-ok: var(--ok);
+  --color-ok-soft: var(--ok-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-ring: var(--ring);
+
+  --font-sans: var(--font-app-sans);
+  --font-mono: var(--font-app-mono);
+}
+
+@layer base {
+  :root {
+    --font-app-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+      "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif;
+    --font-app-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+      "Liberation Mono", monospace;
+  }
+
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    height: 100%;
+  }
+
+  body {
+    min-height: 100%;
+    background-color: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-app-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background-color: var(--accent-soft);
+    color: var(--fg);
+  }
+}
+
+@layer utilities {
+  /* Thanh cuộn mảnh, dùng chung cho sidebar / bảng chi tiết pipeline */
+  .scrollbar-slim {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+  }
+  .scrollbar-slim::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .scrollbar-slim::-webkit-scrollbar-thumb {
+    background-color: var(--border-strong);
+    border-radius: 999px;
+  }
+  .scrollbar-slim::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .animate-fade-up {
+    animation: fade-up 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .animate-fade-in {
+    animation: fade-in 0.25s ease-out both;
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-up,
+  .animate-fade-in {
+    animation: none;
+  }
+}
