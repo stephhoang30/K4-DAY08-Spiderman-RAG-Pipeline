@@ -112,16 +112,23 @@ def load_documents() -> list[dict]:
 
 def chunk_documents(documents: list[dict]) -> list[dict]:
     """
-    Chunk documents bằng RecursiveCharacterTextSplitter.
+    Chunk documents theo 2 tầng: cắt theo MỤC thật trước (MarkdownHeaderTextSplitter
+    trên "##"/"###" do Task 3 chèn sẵn), rồi mới cắt tiếp bằng
+    RecursiveCharacterTextSplitter cho mục nào vẫn dài hơn CHUNK_SIZE.
+
+    Nhờ vậy 1 chunk không còn bị lẫn nội dung của 2 mục khác nhau (trước đây cắt cơ
+    học theo ký tự có thể cắt ngay giữa "2. PHẠM VI ÁP DỤNG" và "3. HÀNH VI VI PHẠM"),
+    và mỗi chunk có thêm metadata "section_title" để Task 10 cite đúng mục.
 
     Returns:
         List of {'content': str, 'metadata': dict} — mỗi item là 1 chunk,
-        metadata giữ nguyên source/doc_type/customer_role của document gốc
-        và thêm chunk_index.
+        metadata giữ nguyên source/doc_type/customer_role của document gốc,
+        thêm chunk_index và section_title (None nếu chunk nằm trước heading đầu tiên).
     """
-    from langchain_text_splitters import RecursiveCharacterTextSplitter
+    from langchain_text_splitters import MarkdownHeaderTextSplitter, RecursiveCharacterTextSplitter
 
-    splitter = RecursiveCharacterTextSplitter(
+    header_splitter = MarkdownHeaderTextSplitter(headers_to_split_on=[("##", "h2"), ("###", "h3")])
+    char_splitter = RecursiveCharacterTextSplitter(
         chunk_size=CHUNK_SIZE,
         chunk_overlap=CHUNK_OVERLAP,
         separators=["\n\n", "\n", ". ", " ", ""],
@@ -129,12 +136,19 @@ def chunk_documents(documents: list[dict]) -> list[dict]:
 
     chunks = []
     for doc in documents:
-        splits = splitter.split_text(doc["content"])
-        for i, chunk_text in enumerate(splits):
-            chunks.append({
-                "content": chunk_text,
-                "metadata": {**doc["metadata"], "chunk_index": i},
-            })
+        chunk_index = 0
+        for section in header_splitter.split_text(doc["content"]):
+            section_title = section.metadata.get("h3") or section.metadata.get("h2")
+            for chunk_text in char_splitter.split_text(section.page_content):
+                chunks.append({
+                    "content": chunk_text,
+                    "metadata": {
+                        **doc["metadata"],
+                        "chunk_index": chunk_index,
+                        "section_title": section_title,
+                    },
+                })
+                chunk_index += 1
     return chunks
 
 

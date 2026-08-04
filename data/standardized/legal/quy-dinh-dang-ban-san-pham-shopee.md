@@ -14,20 +14,17 @@ Tải ngày: 2026-08-04
 
 QUY ĐỊNH VỀ ĐĂNG BÁN SẢN PHẨM TRÊN SHOPEE
 
-A. PHẠM VI VÀ ĐỐI TƯỢNG ÁP DỤNG
+## A. PHẠM VI VÀ ĐỐI TƯỢNG ÁP DỤNG
 
-_1. Đối tượng áp dụng_
-
+### 1. Đối tượng áp dụng
 Quy định này áp dụng đối với tất cả Người Bán trên Sàn TMĐT Shopee (“ _Sàn Shopee_ ”)
 
-_2. Phạm vi áp dụng_
-
+### 2. Phạm vi áp dụng
 Quy định này quy định về việc đăng bán các sản phẩm trên Sàn Shopee.
 
-B. QUY ĐỊNH CHUNG:
+## B. QUY ĐỊNH CHUNG:
 
-_1. Nguyên tắc chung_
-
+### 1. Nguyên tắc chung
 a. Đăng bán sản phẩm trên Shopee là hoạt động của Người Bán dùng hàng hóa, dịch vụ và tài liệu về hàng
 
 hóa, dịch vụ để giới thiệu với khách hàng về hàng hóa, dịch vụ đó.
@@ -46,8 +43,7 @@ chứng từ mà Người Bán cung cấp cho Shopee đều được scan từ c
 
 sửa, tẩy xóa.
 
-_2. Các nội dung không được phép đăng bán_
-
+### 2. Các nội dung không được phép đăng bán
 Người Bán được quyền đăng các sản phẩm lên Shopee nhằm mục đích kinh doanh. Tuy nhiên, NGHIÊM
 
 CẤM đăng tải những sản phẩm có nội dung sau đây:
@@ -86,8 +82,7 @@ l. Vi phạm quyền sở hữu trí tuệ và/hoặc bất kỳ nhãn hiệu h�
 
 m. Các sản phẩm nằm trong Danh sách sản phẩm bị cấm/hạn chế của Shopee.
 
-_3. Các hành vi không được thực hiện_
-
+### 3. Các hành vi không được thực hiện
 a. Sử dụng thông tin, hình ảnh, âm thanh vi phạm pháp luật, thiếu thẩm mỹ, trái với truyền thống lịch sử, văn
 
 hóa, đạo đức, thuần phong mỹ tục Việt Nam.
@@ -130,14 +125,13 @@ k. Tăng giá bán một cách bất hợp lý trước khuyến mãi.
 
 l. Tạo giá bán sản phẩm quá cao hoặc quá thấp so với mặt bằng giá trị thị trường.
 
-C. HƯỚNG DẪN ĐĂNG BÁN SẢN PHẨM TRÊN SHOPEE
+## C. HƯỚNG DẪN ĐĂNG BÁN SẢN PHẨM TRÊN SHOPEE
 
 Tiêu đề, hình ảnh, giá cả, mô tả sản phẩm và các thông tin liên quan phải thống nhất, đúng chính tả, đúng
 
 quy định về đăng tin của Shopee. Cụ thể như sau:
 
-_1. Hình ảnh sản phẩm_
-
+### 1. Hình ảnh sản phẩm
 a. Hình ảnh sản phẩm phải là ảnh chụp rõ, chi tiết tình trạng sản phẩm. Không được để những hình ảnh hoặc
 
 thông tin không liên quan đến sản phẩm này như thông tin giới thiệu shop, thông tin liên hệ hay thông tin
@@ -156,8 +150,7 @@ e. Tuyệt đối không được đăng các hình ảnh khỏa thân, khiêu g
 
 mỹ tục.
 
-_2. Tên sản phẩm_
-
+### 2. Tên sản phẩm
 a. Tên sản phẩm phải mô tả đúng hàng hóa, dịch vụ được đăng bán và phải là tiếng Việt có dấu, đủ ký tự, rõ
 
 nghĩa, không dùng các ký tự đặc biệt, không viết tắt.
@@ -210,8 +203,7 @@ phẩm ra thị trường;
 
 trung gian).
 
-_3.2. Thực phẩm chức năng/thực phẩm bảo vệ sức khỏe_
-
+### 3.2. Thực phẩm chức năng/thực phẩm bảo vệ sức khỏe
 - Người Bán khi đăng bán sản phẩm Thực phẩm chức năng/thực phẩm bảo vệ sức khỏe cần có các giấy tờ
 
 sau:
@@ -232,8 +224,7 @@ cáo sai sự thật.
 
 - Không đăng bán sản phẩm thực phẩm chức năng xách tay.
 
-_3.3. Thời trang/Đồ lót nữ - Đồ lót nam_
-
+### 3.3. Thời trang/Đồ lót nữ - Đồ lót nam
 - Ảnh đại diện sản phẩm nên là ảnh thực, chụp riêng sản phẩm;
 
 - Trong các ảnh do người mẫu mặc, phần ảnh sản phẩm thực phải chiếm ít nhất 40-50% diện tích toàn ảnh;
@@ -242,8 +233,7 @@ _3.3. Thời trang/Đồ lót nữ - Đồ lót nam_
 
 thuần phong mỹ tục.
 
-_3.4. Thời trang/Giày dép/Phụ kiện_
-
+### 3.4. Thời trang/Giày dép/Phụ kiện
 - Nêu rõ chất liệu và kích thước của sản phẩm. Riêng đối với sản phẩm thuộc ngành hàng Thời trang phải có
 
 bảng quy đổi kích thước.
@@ -256,12 +246,10 @@ nhãn hiệu ở phần hình ảnh sản phẩm.
 
 lẫn không đáng có.
 
-_3.5. Nhà cửa & Đời sống_
-
+### 3.5. Nhà cửa & Đời sống
 Đăng sản phẩm theo đúng định dạng _tại đây_.
 
-_3.6. Bách hóa Online_
-
+### 3.6. Bách hóa Online
 a. Thực phẩm khô: Đăng đầy đủ thông tin nguồn gốc, xuất xứ, hạn sử dụng. Riêng đối với các mặt hàng dễ
 
 hư hỏng, cần lưu ý cách sử dụng, bảo quản thích hợp.
@@ -304,26 +292,21 @@ _dẫn_. Hướng dẫn chi tiết vui lòng tham khảo _Quy định về đăn
 
 đăng bán. Đăng bán phải ghi rõ đầy đủ thông tin về nồng độ cồn, hạn sử dụng và thiết lập đúng ngành hàng
 
-_3.7. Mẹ & Bé_
-
+### 3.7. Mẹ & Bé
 Đăng sản phẩm theo đúng định dạng _tại đây_.
 
-_3.8. Đồng Hồ_
-
+### 3.8. Đồng Hồ
 Đăng sản phẩm theo đúng định dạng _tại đây_.
 
-_3.9. Voucher & Dịch vụ_
-
+### 3.9. Voucher & Dịch vụ
 - Đăng sản phẩm theo đúng định dạng _tại đây_.
 
 - Chứng từ cần cung cấp xem _tại đây_.
 
-_3.10. Đồ chơi_
-
+### 3.10. Đồ chơi
 Đăng sản phẩm theo đúng định dạng _tại đây_.
 
-_3.11. Nhà sách Online_
-
+### 3.11. Nhà sách Online
 - Người Bán khi đăng bán sách và ấn phẩm phải tham gia Shopee Mall.
 
 - Các chứng từ cần cung cấp khi tham gia Shopee Mall: Giấy phép đăng ký kinh doanh; và 01 trong 04 loại
@@ -344,8 +327,7 @@ công ty được ủy quyền phân phối từ các đơn vị trên.
 
 - Shopee nghiêm cấm bán sách & ấn phẩm đã qua sử dụng.
 
-_3.12. Băng đĩa phim, ca múa nhạc/sân khấu_
-
+### 3.12. Băng đĩa phim, ca múa nhạc/sân khấu
 Các mặt hàng là băng đĩa phim, ca múa nhạc/sân khấu khi đăng bán cần có: giấy phép phê duyệt nội dung +
 
 dán nhãn kiểm soát + giấy tờ về nguồn gốc sản phẩm (chứng từ nhập khẩu/hóa đơn thuế).
@@ -418,8 +400,7 @@ d. NGƯỜI BÁN chịu hoàn toàn trách nhiệm với Người Mua/sử dụn
 
 bán sản phẩm thuốc không kê đơn trên Sàn Shopee.
 
-_4. Thông tin mô tả_
-
+### 4. Thông tin mô tả
 a. Mô tả sản phẩm cần đầy đủ và chi tiết, giúp người mua có thể hiểu rõ những đặc điểm, công dụng, cách
 
 dùng, lưu ý khi sử dụng của sản phẩm, v.v… để làm căn cứ khi đặt mua hàng. Nếu là sản phẩm đã qua sử
@@ -464,8 +445,7 @@ văn bản xác nhận, hoặc các hình thức văn bản khác theo quy đị
 
 ngành, nghề đó.
 
-_5. Danh mục ngành hàng_
-
+### 5. Danh mục ngành hàng
 a. Người đăng phải chọn đúng nhóm danh mục ngành hàng cho sản phẩm để có thể dễ dàng tiếp cận với
 
 khách hàng.
@@ -480,8 +460,7 @@ d. Người bán lưu ý, việc lựa chọn sai danh mục ngành hàng có th
 
 Shopee trong một số trường hợp và sẽ bị Shopee xử lý theo chính sách xử lý hành vi gian lận của Shopee.
 
-_6. Giá sản phẩm_
-
+### 6. Giá sản phẩm
 a. Giá sản phẩm đăng bán hoặc giá khuyến mãi (nếu có) phải tính bằng đơn vị VNĐ.
 
 b. Nếu bài đăng cho nhiều sản phẩm, phải để giá rõ ràng cho từng sản phẩm.
@@ -498,8 +477,7 @@ loại trên Sàn Shopee. Người bán lưu ý việc để giá bán bất h�
 
 trường hợp và sẽ bị Shopee xử lý theo chính sách xử lý hành vi gian lận của Shopee.
 
-_7. Phí vận chuyển_
-
+### 7. Phí vận chuyển
 a. Người Bán phải xác định chính xác khối lượng sản phẩm cần vận chuyển để ước lượng chi phí vận
 
 chuyển.
@@ -514,8 +492,7 @@ thức xác định khối lượng sản phẩm.
 
 Tham khảo Cách tính phí vận chuyển Shopee cho Người bán _tại đây_.
 
-_8. Chất lượng sản phẩm_
-
+### 8. Chất lượng sản phẩm
 Người Bán cần đảm bảo chất lượng sản phẩm phải đúng như mô tả. Sản phẩm đăng bán trên Sàn Shopee
 
 cần có chất lượng tốt theo các tiêu chuẩn hiện hành, phản ánh đúng kỳ vọng Người mua. Trong trường hợp
@@ -526,10 +503,9 @@ các biện pháp phù hợp lên sản phẩm/tài khoản của Người Bán.
 
 Tham khảo quy định về chất lượng sản phẩm tại đây.
 
-D. QUY ĐỊNH VỀ HẠN SỬ DỤNG CỦA SẢN PHẨM
+## D. QUY ĐỊNH VỀ HẠN SỬ DỤNG CỦA SẢN PHẨM
 
-_1. Danh sách các sản phẩm bắt buộc phải có hạn sử dụng trên bao bì_
-
+### 1. Danh sách các sản phẩm bắt buộc phải có hạn sử dụng trên bao bì
 a. Dược phẩm
 
 b. Hóa chất tẩy rửa, vệ sinh
@@ -548,8 +524,7 @@ g. Thực phẩm chức năng;
 
 văn bản quy phạm pháp luật có liên quan về ghi nhãn hàng hóa.
 
-_2. Quy định về hạn sử dụng của sản phẩm chính_
-
+### 2. Quy định về hạn sử dụng của sản phẩm chính
 a. Người Bán chỉ được phép bán các loại hàng hóa mà khi giao đi phải còn ít nhất 30% thời hạn sử dụng và
 
 còn ít nhất 30 ngày, tính từ thời điểm hiện tại đến ngày hết hạn.
@@ -574,8 +549,7 @@ d. Trường hợp Người Bán thực hiện giảm giá do sản phẩm sắp
 
 nêu rõ trong mô tả sản phẩm.
 
-_3. Quy định về hạn sử dụng của quà tặng kèm_
-
+### 3. Quy định về hạn sử dụng của quà tặng kèm
 a. Khi quà tặng kèm được đăng công khai trên thông tin sản phẩm chính, quy định về hạn sử dụng sẽ được
 
 áp dụng tương tự sản phẩm chính.
@@ -588,7 +562,7 @@ dụng có thể mang đến trải nghiệm không tốt cho Người Mua và l
 
 việc đánh giá kém từ Người Mua trên đơn hàng.
 
-E. XỬ LÝ VI PHẠM
+## E. XỬ LÝ VI PHẠM
 
 Người Bán vi phạm một trong các quy định trên trong quá trình đăng bán sản phẩm, tùy theo mức độ vi
 

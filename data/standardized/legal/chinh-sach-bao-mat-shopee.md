@@ -14,7 +14,7 @@ Tải ngày: 2026-08-04
 
 CHÍNH SÁCH BẢO MẬT
 
-1. GIỚI THIỆU
+## 1. GIỚI THIỆU
 
 1.1. Chào mừng bạn đến với nền tảng Shopee.vn (bao gồm website và ứng dụng di động Shopee) được vận
 
@@ -82,7 +82,7 @@ không nhằm ghi đè những thông báo hoặc các điều khoản đó tr�
 
 bố rõ ràng ngược lại.
 
-2.KHI NÀO SHOPEE SẼ THU THẬP DỮ LIỆU CÁ NHÂN?
+## 2.KHI NÀO SHOPEE SẼ THU THẬP DỮ LIỆU CÁ NHÂN?
 
 2.1. Chúng tôi sẽ/có thể thu thập dữ liệu cá nhân về bạn:
 
@@ -148,7 +148,7 @@ cho chúng tôi dữ liệu cá nhân của họ, bạn tuyên bố và đảm b
 
 xử lý dữ liệu cá nhân của họ theo Chính sách này.
 
-3. SHOPEE SẼ THU THẬP NHỮNG DỮ LIỆU GÌ?
+## 3. SHOPEE SẼ THU THẬP NHỮNG DỮ LIỆU GÌ?
 
 3.1. Trừ trường hợp được quy định khác đi trong Chính sách này, dữ liệu cá nhân mà Shopee có thể thu thập
 
@@ -240,7 +240,7 @@ Dịch Vụ và Nền tảng. Ví dụ như dịch vụ xác định vị trí s
 
 dụng truy cập vị trí của bạn.
 
-4. THU THẬP CÁC DỮ LIỆU KHÁC
+## 4. THU THẬP CÁC DỮ LIỆU KHÁC
 
 4.1 Như với hầu hết các trang web và các ứng dụng di động khác, thiết bị của bạn gửi thông tin có thể gồm
 
@@ -290,7 +290,7 @@ nhưng, thay vì các số lượt xem trang, thiết bị của bạn gửi đ�
 
 được xem và/hoặc phần mềm được cài đặt bởi các Dịch vụ và Nền tảng và thời điểm.
 
-5. COOKIES
+## 5. COOKIES
 
 5.1. Đôi khi chúng tôi hoặc các nhà cung cấp dịch vụ được cho phép và các đối tác quảng cáo của chúng tôi
 
@@ -324,7 +324,7 @@ của bạn. Tuy nhiên, vui lòng lưu ý rằng nếu bạn thực hiện thao
 
 chức năng đầy đủ của Nền tảng hoặc Các Dịch Vụ của chúng tôi.
 
-6. CHÚNG TÔI SỬ DỤNG THÔNG TIN BẠN CUNG CẤP CHO CHÚNG TÔI NHƯ THẾ NÀO?
+## 6. CHÚNG TÔI SỬ DỤNG THÔNG TIN BẠN CUNG CẤP CHO CHÚNG TÔI NHƯ THẾ NÀO?
 
 6.1. Chúng tôi có thể thu thập, sử dụng, tiết lộ và/hoặc xử lý dữ liệu cá nhân của bạn cho các mục đích sau
 
@@ -512,7 +512,7 @@ dụng mà không có sự đồng ý của bạn là được phép theo các q
 
 tin cá nhân hoặc theo quy định pháp luật.
 
-7. SHOPEE BẢO VỆ VÀ LƯU TRỮ THÔNG TIN KHÁCH HÀNG BẰNG CÁCH NÀO
+## 7. SHOPEE BẢO VỆ VÀ LƯU TRỮ THÔNG TIN KHÁCH HÀNG BẰNG CÁCH NÀO
 
 7.1. Chúng tôi thực hiện các biện pháp bảo mật khác nhau và luôn nỗ lực để đảm bảo sự an toàn của dữ liệu
 
@@ -550,7 +550,7 @@ với quy định của Luật riêng tư hiện hành, hoặc mặc dù phù h�
 
 được xóa, tiêu hủy theo quy định của Luật riêng tư hiện hành.
 
-8. SHOPEE CÓ TIẾT LỘ THÔNG TIN THU THẬP TỪ NGƯỜI TRUY CẬP HAY KHÔNG?
+## 8. SHOPEE CÓ TIẾT LỘ THÔNG TIN THU THẬP TỪ NGƯỜI TRUY CẬP HAY KHÔNG?
 
 8.1 Trong quá trình thực hiện hoạt động kinh doanh, chúng tôi sẽ/có thể cần phải sử dụng, xử lý, tiết lộ
 
@@ -722,7 +722,7 @@ Shopee tại dpo.vn@shopee.com trong trường hợp có khả năng vi phạm d
 
 người dùng này.
 
-9. THÔNG TIN VỀ TRẺ EM
+## 9. THÔNG TIN VỀ TRẺ EM
 
 Các Dịch Vụ này không dành cho trẻ em dưới 13 tuổi. Chúng tôi không cố tình thu thập hay lưu giữ bất kỳ dữ
 
@@ -744,7 +744,7 @@ tượng trẻ em như vậy và sẽ gỡ và/hoặc xóa bất kỳ dữ liệ
 
 bất kỳ trẻ em nào dưới 13 tuổi.
 
-10. THÔNG TIN THU THẬP BỞI CÁC BÊN THỨ BA
+## 10. THÔNG TIN THU THẬP BỞI CÁC BÊN THỨ BA
 
 10.1. Nền tảng của chúng tôi sử dụng Google Analytics, một dịch vụ phân tích web được cung cấp bởi
 
@@ -782,7 +782,7 @@ thông qua các ứng dụng này không thuộc sở hữu hay quyền kiểm s
 
 khoản và các chính sách khác được công bố bởi các bên thứ ba đó trên trang web của họ hoặc nơi khác.
 
-11. LOẠI TRỪ TRÁCH NHIỆM VỀ NGHĨA VỤ BẢO MẬT VÀ CÁC TRANG WEB BÊN THỨ BA
+## 11. LOẠI TRỪ TRÁCH NHIỆM VỀ NGHĨA VỤ BẢO MẬT VÀ CÁC TRANG WEB BÊN THỨ BA
 
 11.1. CHÚNG TÔI KHÔNG ĐẢM BẢO TÍNH BẢO MẬT ĐỐI VỚI DỮ LIỆU CÁ NHÂN VÀ/HOẶC THÔNG TIN
 
@@ -830,7 +830,7 @@ tôi và các liên kết được đặt trên từng trang web đó và do đ�
 
 trang web được liên kết này (bao gồm nếu một trang web cụ thể không hoạt động).
 
-12. SHOPEE SẼ CHUYỂN THÔNG TIN CỦA BẠN RA NƯỚC NGOÀI?
+## 12. SHOPEE SẼ CHUYỂN THÔNG TIN CỦA BẠN RA NƯỚC NGOÀI?
 
 Thông tin và/hoặc dữ liệu cá nhân của bạn có thể được chuyển ra nước ngoài, lưu trữ hoặc xử lý bên ngoài
 
@@ -838,7 +838,7 @@ quốc gia của bạn cho một hoặc nhiều Mục đích. Shopee sẽ chỉ 
 
 ngoài khi phù hợp với các quy định của pháp luật về bảo vệ dữ liệu cá nhân.
 
-13. BẠN CÓ THỂ RÚT LẠI SỰ ĐỒNG Ý, YÊU CẦU HẠN CHẾ XỬ LÝ, PHẢN ĐỐI XỬ LÝ, YÊU CẦU CUNG
+## 13. BẠN CÓ THỂ RÚT LẠI SỰ ĐỒNG Ý, YÊU CẦU HẠN CHẾ XỬ LÝ, PHẢN ĐỐI XỬ LÝ, YÊU CẦU CUNG
 
 CẤP DỮ LIỆU CÁ NHÂN, TRUY CẬP HOẶC ĐIỀU CHỈNH THÔNG TIN BẠN ĐÃ CUNG CẤP CHO CHÚNG
 
@@ -950,7 +950,7 @@ vệ bí mật thông tin cá nhân, trường hợp các điều luật đó y�
 
 dữ liệu cá nhân trong các trường hợp như thế.
 
-14. THẮC MẮC, QUAN NGẠI HOẶC KHIẾU NẠI? LIÊN HỆ VỚI CHÚNG TÔI
+## 14. THẮC MẮC, QUAN NGẠI HOẶC KHIẾU NẠI? LIÊN HỆ VỚI CHÚNG TÔI
 
 Nếu bạn có bất kỳ thắc mắc, yêu cầu bảo vệ hoặc khiếu nại nào về các phương pháp bảo vệ quyền riêng tư
 

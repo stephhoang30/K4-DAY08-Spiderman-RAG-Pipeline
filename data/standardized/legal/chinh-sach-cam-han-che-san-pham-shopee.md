@@ -14,11 +14,11 @@ Tải ngày: 2026-08-04
 
 CHÍNH SÁCH CẤM/HẠN CHẾ SẢN PHẨM
 
-1. ĐỐI TƯỢNG ÁP DỤNG
+## 1. ĐỐI TƯỢNG ÁP DỤNG
 
 Chính sách này áp dụng đối với tất cả Người Bán trên Sàn TMĐT Shopee (“ _Sàn Shopee_ ”).
 
-2. PHẠM VI ÁP DỤNG
+## 2. PHẠM VI ÁP DỤNG
 
 Chính sách này áp dụng đối với việc đăng bán sản phẩm, hàng hóa, dịch vụ trên Sàn Shopee. Mỗi khi đăng
 
@@ -32,7 +32,7 @@ Danh sách có thể sẽ thay đổi dựa theo tình hình thực tế, vui l�
 
 hóa của bạn không vi phạm Chính Sách Shopee.
 
-3. HÀNH VI VI PHẠM VÀ BIỆN PHÁP XỬ LÝ
+## 3. HÀNH VI VI PHẠM VÀ BIỆN PHÁP XỬ LÝ
 
 Việc vi phạm Chính Sách Cấm/Hạn Chế Sản Phẩm có thể dẫn đến việc Người Bán phải chịu một loạt các
 
@@ -54,7 +54,7 @@ Việc áp dụng các biện pháp chế tài cụ thể khác sẽ thuộc to�
 
 Sách Xử Lý Gian Lận/Vi Phạm có hiệu lực trong từng thời điểm trên Sàn Shopee.
 
-4. DANH SÁCH SẢN PHẨM BỊ CẤM/HẠN CHẾ MUA BÁN TRÊN SHOPEE
+## 4. DANH SÁCH SẢN PHẨM BỊ CẤM/HẠN CHẾ MUA BÁN TRÊN SHOPEE
 
 4.1. Hàng vi phạm bản quyền: Hàng nhái, hàng giả, bản sao trái phép của một sản phẩm hay hiện vật mà có
 

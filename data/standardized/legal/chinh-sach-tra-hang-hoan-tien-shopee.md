@@ -14,7 +14,7 @@ Tải ngày: 2026-08-04
 
 CHÍNH SÁCH TRẢ HÀNG VÀ HOÀN TIỀN
 
-1. ĐỐI TƯỢNG VÀ PHẠM VI ÁP DỤNG
+## 1. ĐỐI TƯỢNG VÀ PHẠM VI ÁP DỤNG
 
 1.1.Đối Tượng Áp Dụng
 
@@ -38,7 +38,7 @@ hàng, hoàn tiền; cũng như quyền và nghĩa vụ của Shopee, Người B
 
 liên quan trong quá trình giải quyết yêu cầu của Người Mua.
 
-2. ĐIỀU KIỆN ÁP DỤNG
+## 2. ĐIỀU KIỆN ÁP DỤNG
 
 2.1.Theo các điều khoản và điều kiện được quy định trong Chính Sách Trả Hàng và Hoàn Tiền này và tạo
 
@@ -64,7 +64,7 @@ xảy ra trước, trong hoặc sau Thời Gian Shopee Đảm Bảo.
 
 Vụ Shopee Mall.
 
-3. ĐIỀU KIỆN YÊU CẦU TRẢ HÀNG/HOÀN TIỀN
+## 3. ĐIỀU KIỆN YÊU CẦU TRẢ HÀNG/HOÀN TIỀN
 
 3.1.Người Mua đồng ý rằng Người Mua chỉ có thể yêu cầu trả hàng/hoàn tiền trong các trường hợp sau:
 
@@ -122,12 +122,11 @@ với các phương thức nhận hoàn tiền theo quy định tại Điều 3.
 
 định cuối cùng đối với yêu cầu đó dựa trên các quy định nêu trên và theo Điều Khoản Dịch Vụ của Shopee.
 
-4. QUY ĐỊNH BỔ SUNG ĐỐI VỚI CÁC TRƯỜNG HỢP TRẢ HÀNG COM
+## 4. QUY ĐỊNH BỔ SUNG ĐỐI VỚI CÁC TRƯỜNG HỢP TRẢ HÀNG COM
 
 Việc Trả hàng COM được thực hiện với các quy định bổ sung như sau:
 
-_4.1. Đối tượng áp dụng_
-
+### 4.1. Đối tượng áp dụng
 a. Trả hàng COM sẽ chỉ được áp dụng với các đối tượng như sau (“Người Mua hợp lệ”):
 
 i. Người Mua là thành viên của Chương trình khách hàng thân thiết Shopee đạt hạng Vàng và Kim Cương.
@@ -144,8 +143,7 @@ Tuy nhiên, trong trường hợp Shopee, vì bất cứ lý do gì theo quyết
 
 Mua đó được quyền Trả hàng COM, Người Bán sẽ không phải chịu phí vận chuyển của đơn hoàn.
 
-_4.2. Hạn mức_
-
+### 4.2. Hạn mức
 Người Mua hợp lệ chỉ được Trả hàng COM trong các hạn mức được tính theo tháng như sau:
 
 a. Đối với khách hàng thân thiết hạng Vàng và Kim Cương: không giới hạn hạn mức theo tháng, trừ trường
@@ -212,8 +210,7 @@ thiết vừa được hưởng quyền lợi theo gói ShopeeVIP thì sẽ đư
 
 mức cao hơn.
 
-_4.3. Minh bạch thông tin_
-
+### 4.3. Minh bạch thông tin
 a. Shopee có quyền cung cấp thông tin về thứ hạng/hạn mức/quyền lợi Trả hàng COM của Người Mua cho
 
 Người Bán trong trường hợp Người Bán có căn cứ hợp lý chứng minh Buyer không có quyền Trả hàng COM.
@@ -234,8 +231,7 @@ Khi thực hiện yêu cầu Trả hàng COM, Người Mua đồng ý cho Shopee
 
 Điều 4.3.a nêu trên cho Người Bán.
 
-_4.4 Điều khoản loại trừ liên quan đến Trả hàng COM đối với một số Người bán và/hoặc nhóm sản phẩm_
-
+### 4.4 Điều khoản loại trừ liên quan đến Trả hàng COM đối với một số Người bán và/hoặc nhóm sản phẩm
 Trả hàng COM sẽ không áp dụng với đối với một số Người bán và/hoặc nhóm sản phẩm nhất định dù Người
 
 mua thỏa các điều kiện ở Điều 4.1 nêu trên, bao gồm nhưng không giới hạn ở những Người bán và sản phẩm
@@ -250,7 +246,7 @@ tin sẽ được ghi chú rõ ràng tại trang chi tiết, hoặc hình ảnh 
 
 khác của Shopee.
 
-5. QUYỀN CỦA NGƯỜI BÁN
+## 5. QUYỀN CỦA NGƯỜI BÁN
 
 Khi nhận được yêu cầu trả hàng và/hoặc hoàn tiền từ phía Người Mua, Shopee sẽ xem xét và quyết định cho
 
@@ -274,7 +270,7 @@ và không có khiếu nại đối với quyết định xử lý này. Việc 
 
 nhắc thực hiện mà không cần Người Mua phải hoàn trả hàng cho Người Bán.
 
-6. YÊU CẦU ĐỐI VỚI SẢN PHẨM HOÀN TRẢ
+## 6. YÊU CẦU ĐỐI VỚI SẢN PHẨM HOÀN TRẢ
 
 Để hạn chế các rủi ro phát sinh liên quan đến việc hoàn trả Sản Phẩm, Người Mua lưu ý cần phải đóng gói
 
@@ -290,7 +286,7 @@ bằng chứng đối chiếu/khiếu nại về sau. Shopee sẽ thông báo ch
 
 hay ảnh chụp trong từng trường hợp cụ thể.
 
-7. TRÁCH NHIỆM VỀ CHI PHÍ VẬN CHUYỂN HOÀN TRẢ SẢN PHẨM CỦA NGƯỜI BÁN
+## 7. TRÁCH NHIỆM VỀ CHI PHÍ VẬN CHUYỂN HOÀN TRẢ SẢN PHẨM CỦA NGƯỜI BÁN
 
 7.1. Người Bán sẽ chịu chi phí vận chuyển cho việc trả hàng chiều hoàn trả sản phẩm đối với:
 
@@ -330,7 +326,7 @@ Vui lòng tham khảo chi tiết các thông tin về chi phí vận chuyển ch
 
 ĐÂY.
 
-8. TRÁCH NHIỆM VỀ CHI PHÍ HOÀN TRẢ SẢN PHẨM CỦA NGƯỜI MUA
+## 8. TRÁCH NHIỆM VỀ CHI PHÍ HOÀN TRẢ SẢN PHẨM CỦA NGƯỜI MUA
 
 8.1. Với Sản Phẩm mua tại Shopee Mall, Người Mua có thể lựa chọn hoàn trả Sản Phẩm:
 
@@ -364,7 +360,7 @@ chính sách của Shopee khi Người Mua đáp ứng được các điều ki�
 
 hàng/hoàn tiền của Người Mua được chấp nhận.
 
-9. HOÀN TIỀN ĐỐI VỚI SẢN PHẨM HOÀN TRẢ
+## 9. HOÀN TIỀN ĐỐI VỚI SẢN PHẨM HOÀN TRẢ
 
 9.1. Shopee sẽ chỉ hoàn tiền cho Người Mua thuộc một trong các trường hợp sau:
 
@@ -430,7 +426,7 @@ và Hoàn Tiền của Shopee.
 
 cho Người Mua.
 
-10. LIÊN LẠC GIỮA NGƯỜI BÁN VÀ NGƯỜI MUA
+## 10. LIÊN LẠC GIỮA NGƯỜI BÁN VÀ NGƯỜI MUA
 
 Shopee khuyến khích Người Mua chủ động liên hệ với Người Bán để thương lượng và giải quyết với nhau
 
@@ -440,7 +436,7 @@ thông qua các kênh liên lạc được cung cấp trên hệ thống Shopee 
 
 sẽ có rủi ro cho Người Mua khi hệ thống Shopee không thể lưu lại bằng chứng của việc thương lượng này.
 
-11. TRANH CHẤP GIỮA NGƯỜI MUA VÀ NGƯỜI BÁN
+## 11. TRANH CHẤP GIỮA NGƯỜI MUA VÀ NGƯỜI BÁN
 
 11.1.Trong trường hợp Người Mua và Người Bán không thể đồng thuận về phương án giải quyết, Người Mua
 
@@ -464,7 +460,7 @@ Shopee Đảm Bảo, Shopee có quyền điều chỉnh số tiền đã thanh t
 
 giải quyết tranh chấp giữa Người bán và Người mua.
 
-12. CÁC ĐIỀU KHOẢN CHUNG
+## 12. CÁC ĐIỀU KHOẢN CHUNG
 
 12.1.Người mua và Người bán đồng ý bồi thường và giữ cho Shopee không bị thiệt hại, hoặc chống lại bất kỳ
 

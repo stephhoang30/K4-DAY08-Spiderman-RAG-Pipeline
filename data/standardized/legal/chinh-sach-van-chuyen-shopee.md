@@ -14,10 +14,9 @@ Tải ngày: 2026-08-04
 
 CHÍNH SÁCH VẬN CHUYỂN SHOPEE
 
-A. PHẠM VI VÀ ĐỐI TƯỢNG ÁP DỤNG
+## A. PHẠM VI VÀ ĐỐI TƯỢNG ÁP DỤNG
 
-_1. Đối tượng áp dụng_
-
+### 1. Đối tượng áp dụng
 a. Chính Sách Vận Chuyển này áp dụng đối với Người Mua, Người Bán, các đơn vị cung cấp dịch vụ vận
 
 chuyển, nhân viên giao nhận (shipper) của các đơn vị cung cấp dịch vụ vận chuyển trên Sàn TMĐT Shopee
@@ -34,8 +33,7 @@ cách sử dụng dịch vụ vận chuyển được hỗ trợ trên Sàn Shop
 
 Chuyển này. Shopee bảo lưu quyền sửa đổi Chính Sách Vận Chuyển này vào bất cứ thời điểm nào.
 
-_2. Phạm vi áp dụng_
-
+### 2. Phạm vi áp dụng
 a. Chính Sách Vận Chuyển này quy định về các loại hàng hóa không hỗ trợ vận chuyển, vận chuyển có điều
 
 kiện, quy định về đóng gói hàng hóa, các quyền, nghĩa vụ của các Bên liên quan đến việc vận chuyển hàng
@@ -50,10 +48,9 @@ quy định của pháp luật có liên quan và tự chịu trách nhiệm tr�
 
 phạm vi vận chuyển mà Người Bán tự tổ chức.
 
-B. QUY ĐỊNH VỀ HÀNG HÓA KHÔNG HỖ TRỢ VẬN CHUYỂN, VẬN CHUYỂN CÓ ĐIỀU KIỆN
+## B. QUY ĐỊNH VỀ HÀNG HÓA KHÔNG HỖ TRỢ VẬN CHUYỂN, VẬN CHUYỂN CÓ ĐIỀU KIỆN
 
-_1. Quy định về các loại hàng hóa không hỗ trợ vận chuyển trên Shopee_
-
+### 1. Quy định về các loại hàng hóa không hỗ trợ vận chuyển trên Shopee
 1.1. Các loại hàng hóa không hỗ trợ vận chuyển trên Sàn Shopee bao gồm nhưng không giới hạn các loại
 
 hàng hóa sau:
@@ -104,8 +101,7 @@ Sàn Shopee, Người Bán phải bồi thường đầy đủ và toàn bộ c�
 
 bên có liên Quan trong quá trình vận chuyển phải gánh chịu.
 
-_2. Quy định về các loại hàng hóa vận chuyển có điều kiện_
-
+### 2. Quy định về các loại hàng hóa vận chuyển có điều kiện
 Nhóm hàng hóa đặc biệt sau đây chỉ được chấp nhận vận chuyển với điều kiện bắt buộc:
 
 a. Các sản phẩm cây cảnh
@@ -138,8 +134,7 @@ và sẽ không giải quyết bất kỳ khiếu nại, yêu cầu bồi thư�
 
 iii. Xem chi tiết _TẠI ĐÂY_
 
-_3. Quy định về vận chuyển đối với những loại hàng hóa đặc thù khác_
-
+### 3. Quy định về vận chuyển đối với những loại hàng hóa đặc thù khác
 a. Hàng dễ hư hại/ tổn thất do đặc tính sản phẩm
 
 Danh mục các sản phẩm dễ vỡ hoặc dễ hư hại/tổn thất trong quá trình vận chuyển do đặc tính sản phẩm:
@@ -210,14 +205,13 @@ này, Người Bán phải bồi thường đầy đủ và toàn bộ các thi�
 
 quan trong quá trình vận chuyển phải gánh chịu.
 
-C. QUY ĐỊNH VỀ ĐÓNG GÓI HÀNG HÓA
+## C. QUY ĐỊNH VỀ ĐÓNG GÓI HÀNG HÓA
 
 Trước khi vận chuyển, Người Bán phải đảm bảo hàng hóa đã sẵn sàng để được vận chuyển với quãng đường
 
 tương ứng với từng đơn hàng. Cụ thể như sau:
 
-_1. Yêu cầu chung_
-
+### 1. Yêu cầu chung
 a. Tất cả các bưu kiện đều phải được đóng gói sẵn sàng, được niêm phong bởi Người Bán trước khi vận
 
 chuyển. Người Bán hoàn toàn chịu trách nhiệm đóng gói sản phẩm của mình đúng quy định khi giao hàng
@@ -272,8 +266,7 @@ hợp lệ của hàng hóa khi hàng hóa bị kiểm tra bởi cơ quan nhà n
 
 tranh chấp với các bên có liên quan v.v…
 
-_2. Quy định về khối lượng và kích thước đóng gói hàng_
-
+### 2. Quy định về khối lượng và kích thước đóng gói hàng
 a. Trong quy định về khối lượng và kích thước đóng gói hàng, các đơn vị vận chuyển sẽ chỉ nhận các bưu
 
 kiện có khối lượng hoặc kích thước thuộc các giới hạn cho phép (như được thể hiện trong bảng dưới đây, và
@@ -336,8 +329,7 @@ hàng của Người Bán.
 
 f. Xem chi tiết quy định khối lượng và kích thước đóng gói đơn hàng Shopee _TẠI ĐÂY_.
 
-_3. Quy định đóng gói_
-
+### 3. Quy định đóng gói
 Xem chi tiết Quy định đóng gói _TẠI ĐÂY_.
 
 Shopee có quyền sửa đổi các quy định này trong từng thời điểm. Việc Người Bán tiếp tục sử dụng dịch vụ
@@ -346,7 +338,7 @@ của Shopee sau khi các thay đổi được đăng tải sẽ cấu thành vi
 
 được sửa đổi.
 
-D. QUY ĐỊNH VỀ KHIẾU NẠI VÀ BỒI THƯỜNG
+## D. QUY ĐỊNH VỀ KHIẾU NẠI VÀ BỒI THƯỜNG
 
 Trong trường hợp có khiếu nại đối với hoạt động vận chuyển trên Sàn Shopee, các Bên có thể thực hiện
 
@@ -356,8 +348,7 @@ Kênh tiếp nhận khiếu nại về vận chuyển: Vui lòng liên hệ Bộ
 
 ĐÂY_-%3F?previousPage=other%20articles).
 
-_1. Thời hạn khiếu nại:_
-
+### 1. Thời hạn khiếu nại:
 Để đảm bảo quyền lợi, Người Mua/ Người Bán cần phải thực hiện khiếu nại trong thời gian được quy định
 
 trong từng trường hợp dưới đây. Nếu quá thời hạn khiếu nại mà Shopee không nhận được bất kì khiếu nại,
@@ -392,8 +383,7 @@ c. Khiếu nại sai phí vận chuyển dẫn đến tiền hàng nhận đư�
 
 tiền hàng của đơn hàng được chuyển vào Số dư Tài khoản Shopee.
 
-_2. Thời gian xử lý khiếu nại:_
-
+### 2. Thời gian xử lý khiếu nại:
 a. Tối đa 10 ngày làm việc kể từ thời điểm nhận được đầy đủ bằng chứng hợp lệ từ các bên có liên quan.
 
 Trong trường hợp vụ việc có nhiều tình tiết phức tạp đòi hỏi cần nhiều thời gian để xác minh thì thời gian xử lý
@@ -414,8 +404,7 @@ chuyển sẽ được thực hiện theo quy định của pháp luật về b�
 
 chuyển.
 
-_3. Bằng chứng khiếu nại:_
-
+### 3. Bằng chứng khiếu nại:
 a. Khiếu nại với đơn trả hàng hoàn tiền (dành cho Người Mua/ Người Bán): Xem chi tiết tại _Chính sách Trả
 
 hàng và Hoàn tiền_.
@@ -466,8 +455,7 @@ Việc không thể cung cấp được bằng chứng hợp lệ trong thời h
 
 Shopee từ chối yêu cầu của Người khiếu nại.
 
-_4. Bồi thường_
-
+### 4. Bồi thường
 a. Kết quả xử lý khiếu nại về vận chuyển sẽ được Shopee thông báo trực tiếp cho Người Mua/ Người Bán
 
 kèm theo thông tin về mức bồi thường (nếu có).
@@ -536,7 +524,7 @@ sản phẩm được thể hiện trên phiếu gửi hàng hoặc không cung
 
 phẩm.
 
-E. CÁC KHUYẾN CÁO VỀ DỊCH VỤ VẬN CHUYỂN
+## E. CÁC KHUYẾN CÁO VỀ DỊCH VỤ VẬN CHUYỂN
 
 1. Dịch vụ vận chuyển được hỗ trợ trên Sàn TMĐT Shopee không cho phép Người Mua kiểm tra hàng trước
 

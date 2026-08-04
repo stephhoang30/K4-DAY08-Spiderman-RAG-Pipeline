@@ -54,6 +54,15 @@ _UNICODE_FONT_CANDIDATES = [
     "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",       # Linux
     "/usr/share/fonts/truetype/noto/NotoSans-Regular.ttf",   # Linux
 ]
+# Font đậm để render heading ("#"/"##"/"###" do Task 3 chèn) khác biệt với thân bài —
+# PageIndex build cây mục lục bằng cách phân tích LAYOUT trang PDF (chữ to/đậm), không
+# đọc cú pháp markdown, nên chỉ giữ ký tự "#" trong text thuần không giúp gì cả.
+_UNICODE_BOLD_FONT_CANDIDATES = [
+    "C:/Windows/Fonts/arialbd.ttf",                          # Windows
+    "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",  # Linux
+    "/usr/share/fonts/truetype/noto/NotoSans-Bold.ttf",      # Linux
+]
+_HEADING_FONT_SIZE = {1: 15, 2: 13, 3: 12}  # cấp "#"/"##"/"###" -> cỡ chữ pt
 
 
 def _build_combined_pdf() -> Path:
@@ -84,10 +93,27 @@ def _build_combined_pdf() -> Path:
             "_UNICODE_FONT_CANDIDATES."
         )
 
+    bold_path = next((p for p in _UNICODE_BOLD_FONT_CANDIDATES if Path(p).exists()), None)
+    if bold_path:
+        pdf.add_font("Body", "B", bold_path)
+    has_bold = bold_path is not None
+
     for md_file in sorted(STANDARDIZED_DIR.rglob("*.md")):
         text = md_file.read_text(encoding="utf-8")
         pdf.add_page()
-        pdf.multi_cell(0, 6, f"=== {md_file.parent.name}/{md_file.name} ===\n\n{text}")
+        pdf.set_font("Body", size=11)
+        pdf.multi_cell(0, 6, f"=== {md_file.parent.name}/{md_file.name} ===")
+        pdf.ln(2)
+
+        for line in text.splitlines():
+            level = len(line) - len(line.lstrip("#"))
+            heading_text = line.lstrip("#").strip()
+            if level and heading_text:
+                pdf.set_font("Body", style="B" if has_bold else "", size=_HEADING_FONT_SIZE.get(level, 12))
+                pdf.multi_cell(0, 8, heading_text, new_x="LMARGIN", new_y="NEXT")
+                pdf.set_font("Body", size=11)
+            else:
+                pdf.multi_cell(0, 6, line or " ", new_x="LMARGIN", new_y="NEXT")
 
     pdf.output(str(COMBINED_PDF_PATH))
     return COMBINED_PDF_PATH

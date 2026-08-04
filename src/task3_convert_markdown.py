@@ -30,6 +30,40 @@ LANDING_DIR = Path(__file__).parent.parent / "data" / "landing"
 OUTPUT_DIR = Path(__file__).parent.parent / "data" / "standardized"
 
 
+# Các văn bản pháp lý Shopee KHÔNG dùng 1 quy ước đánh mục chung — đã kiểm chứng
+# trên cả 5 file legal thật: có file dùng "1. TÊN MỤC" (số + CHỮ HOA), có file dùng
+# "A. TÊN MỤC" (chữ + CHỮ HOA) lồng "_1. Tên mục con_" (số, in nghiêng). 3 regex dưới
+# đây bắt đúng cả 2 kiểu mà KHÔNG lẫn với danh sách đánh số trong thân bài (ví dụ
+# "2. Sản Phẩm bị lỗi..." là điều kiện thứ 2 trong 1 danh sách, không phải heading) —
+# phân biệt bằng việc heading luôn viết HOA TOÀN BỘ, còn thân bài luôn có chữ thường.
+_VN_LOWER = "a-zàáảãạăằắẳẵặâầấẩẫậèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵ"
+_HAS_LOWER_RE = re.compile(f"[{_VN_LOWER}]")
+_HEADING_NUM_RE = re.compile(r"^\d+\.(?!\d)\s*[A-ZÀ-ỸĐ][^\n]*$", re.MULTILINE)
+_HEADING_LETTER_RE = re.compile(r"^[A-ZĐ]\.\s+[^\n]*$", re.MULTILINE)
+_SUBHEADING_ITALIC_RE = re.compile(r"^_\d+(?:\.\d+)?\.?\s*[^_\n]+_\s*$", re.MULTILINE)
+
+
+def _is_all_caps_line(line: str) -> bool:
+    return not _HAS_LOWER_RE.search(line)
+
+
+def inject_section_headings(body: str) -> str:
+    """
+    Chèn "##"/"###" vào các dòng heading/sub-heading thật, để Task 4 dùng
+    MarkdownHeaderTextSplitter cắt chunk không bị lẫn 2 mục khác nhau.
+
+    Không sửa dòng nào khác — chỉ thêm prefix, giữ nguyên toàn bộ nội dung.
+    """
+    body = _SUBHEADING_ITALIC_RE.sub(lambda m: f"### {m.group().strip().strip('_')}", body)
+
+    for pattern in (_HEADING_NUM_RE, _HEADING_LETTER_RE):
+        body = pattern.sub(
+            lambda m: f"## {m.group().strip()}" if _is_all_caps_line(m.group()) else m.group(),
+            body,
+        )
+    return body
+
+
 def normalize_spacing(text: str) -> str:
     """
     Gộp các khoảng trắng liên tiếp trong cùng một dòng thành một.
@@ -79,6 +113,7 @@ def convert_legal_docs() -> int:
         print(f"Converting: {filepath.name}")
         result = md.convert(str(filepath))
         body = normalize_spacing(result.text_content)
+        body = inject_section_headings(body)
         info = meta_by_file.get(filepath.name, {})
 
         header = build_header({
