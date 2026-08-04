@@ -1,4 +1,4 @@
-import type { KnowledgeDoc } from "@/lib/types";
+import type { DocFileStats, KnowledgeDoc } from "@/lib/types";
 
 /**
  * Knowledge base của bài lab: 5 văn bản chính sách (PDF) + 8 bài hướng dẫn (JSON).
@@ -230,3 +230,152 @@ export const PIPELINE_CONFIG = {
 } as const;
 
 export const TOTAL_CHUNKS = DOCUMENTS.reduce((sum, d) => sum + d.chunkCount, 0);
+
+// ---------------------------------------------------------------------------
+// Thống kê file thật (trang Kho tri thức)
+// ---------------------------------------------------------------------------
+
+/**
+ * Đối chiếu mỗi tài liệu với file thật trong repo.
+ * `charCount` / `bodyCharCount` đo trực tiếp trên `data/standardized/**\/*.md`
+ * (13 file, tổng 144.183 ký tự); `landingFile` là file gốc Task 1/Task 2 tải về.
+ */
+export const DOC_FILE_STATS: DocFileStats[] = [
+  {
+    docId: "legal_return_refund",
+    standardizedFile: "chinh-sach-tra-hang-hoan-tien-shopee.md",
+    landingFile: "chinh-sach-tra-hang-hoan-tien-shopee.pdf",
+    sourceFormat: "PDF",
+    charCount: 19_917,
+    bodyCharCount: 19_479,
+    sourceTitle: "CHÍNH SÁCH TRẢ HÀNG VÀ HOÀN TIỀN",
+  },
+  {
+    docId: "legal_privacy",
+    standardizedFile: "chinh-sach-bao-mat-shopee.md",
+    landingFile: "chinh-sach-bao-mat-shopee.pdf",
+    sourceFormat: "PDF",
+    charCount: 43_572,
+    bodyCharCount: 42_911,
+    sourceTitle: "CHÍNH SÁCH BẢO MẬT",
+  },
+  {
+    docId: "legal_listing_rules",
+    standardizedFile: "quy-dinh-dang-ban-san-pham-shopee.md",
+    landingFile: "quy-dinh-dang-ban-san-pham-shopee.pdf",
+    sourceFormat: "PDF",
+    charCount: 21_847,
+    bodyCharCount: 21_352,
+    sourceTitle: "QUY ĐỊNH VỀ ĐĂNG BÁN SẢN PHẨM TRÊN SHOPEE",
+  },
+  {
+    docId: "legal_prohibited",
+    standardizedFile: "chinh-sach-cam-han-che-san-pham-shopee.md",
+    landingFile: "chinh-sach-cam-han-che-san-pham-shopee.pdf",
+    sourceFormat: "PDF",
+    charCount: 13_109,
+    bodyCharCount: 12_722,
+    sourceTitle: "CHÍNH SÁCH CẤM/HẠN CHẾ SẢN PHẨM",
+  },
+  {
+    docId: "legal_shipping",
+    standardizedFile: "chinh-sach-van-chuyen-shopee.md",
+    landingFile: "chinh-sach-van-chuyen-shopee.pdf",
+    sourceFormat: "PDF",
+    charCount: 24_747,
+    bodyCharCount: 24_200,
+    sourceTitle: "CHÍNH SÁCH VẬN CHUYỂN SHOPEE",
+  },
+  {
+    docId: "news_payment_methods",
+    standardizedFile: "article_01_phuong-thuc-thanh-toan.md",
+    landingFile: "article_01_phuong-thuc-thanh-toan.json",
+    sourceFormat: "JSON",
+    charCount: 6_205,
+    bodyCharCount: 5_889,
+    sourceTitle:
+      "[Thành viên mới] Shopee hiện đang có những phương thức thanh toán nào?",
+  },
+  {
+    docId: "news_qr_payment",
+    standardizedFile: "article_02_thanh-toan-qr.md",
+    landingFile: "article_02_thanh-toan-qr.json",
+    sourceFormat: "JSON",
+    charCount: 1_810,
+    bodyCharCount: 1_481,
+    sourceTitle:
+      "[Thanh toán] Làm thế nào để thanh toán bằng phương thức Thanh toán QR",
+  },
+  {
+    docId: "news_order_tracking",
+    standardizedFile: "article_03_theo-doi-van-chuyen-don-hang.md",
+    landingFile: "article_03_theo-doi-van-chuyen-don-hang.json",
+    sourceFormat: "JSON",
+    charCount: 1_742,
+    bodyCharCount: 1_381,
+    sourceTitle:
+      "[Thành viên mới] Cách theo dõi tình trạng vận chuyển của đơn hàng?",
+  },
+  {
+    docId: "news_refund_evidence",
+    standardizedFile: "article_04_bang-chung-tra-hang-hoan-tien.md",
+    landingFile: "article_04_bang-chung-tra-hang-hoan-tien.json",
+    sourceFormat: "JSON",
+    charCount: 3_655,
+    bodyCharCount: 3_315,
+    sourceTitle:
+      "[Trả hàng/Hoàn tiền] Hướng dẫn chuẩn bị bằng chứng khi yêu cầu Trả hàng/ Hoàn tiền",
+  },
+  {
+    docId: "news_refund_request",
+    standardizedFile: "article_05_gui-yeu-cau-tra-hang-hoan-tien.md",
+    landingFile: "article_05_gui-yeu-cau-tra-hang-hoan-tien.json",
+    sourceFormat: "JSON",
+    charCount: 2_797,
+    bodyCharCount: 2_417,
+    sourceTitle: "[Trả hàng/ Hoàn tiền] Hướng dẫn gửi yêu cầu Trả hàng/ Hoàn tiền",
+  },
+  {
+    docId: "news_refund_tracking",
+    standardizedFile: "article_06_theo-doi-tra-hang-hoan-tien.md",
+    landingFile: "article_06_theo-doi-tra-hang-hoan-tien.json",
+    sourceFormat: "JSON",
+    charCount: 1_739,
+    bodyCharCount: 1_325,
+    sourceTitle:
+      "[Trả hàng/ Hoàn tiền] Theo dõi tình trạng Trả hàng/ Hoàn tiền trên Shopee",
+  },
+  {
+    docId: "news_refund_restrictions",
+    standardizedFile: "article_07_san-pham-han-che-tra-hang.md",
+    landingFile: "article_07_san-pham-han-che-tra-hang.json",
+    sourceFormat: "JSON",
+    charCount: 2_207,
+    bodyCharCount: 1_872,
+    sourceTitle: "[Trả hàng/ Hoàn tiền] Sản phẩm hạn chế trả hàng là gì?",
+  },
+  {
+    docId: "news_cross_border",
+    standardizedFile: "article_08_theo-doi-don-hang-quoc-te.md",
+    landingFile: "article_08_theo-doi-don-hang-quoc-te.json",
+    sourceFormat: "JSON",
+    charCount: 836,
+    bodyCharCount: 507,
+    sourceTitle:
+      "[Đơn hàng Quốc tế] Hướng dẫn theo dõi hành trình đơn hàng Quốc tế đã đặt trên Shopee?",
+  },
+];
+
+export const DOC_FILE_STATS_BY_ID: Record<string, DocFileStats> =
+  Object.fromEntries(DOC_FILE_STATS.map((stats) => [stats.docId, stats]));
+
+export function getDocFileStats(docId: string): DocFileStats | undefined {
+  return DOC_FILE_STATS_BY_ID[docId];
+}
+
+export const TOTAL_TOKENS = DOCUMENTS.reduce((sum, d) => sum + d.tokenCount, 0);
+
+export const TOTAL_CHARS = DOC_FILE_STATS.reduce((sum, s) => sum + s.charCount, 0);
+
+/** Nguồn dữ liệu chung của bài lab, hiển thị ở sơ đồ luồng. */
+export const CORPUS_SOURCE = "help.shopee.vn";
