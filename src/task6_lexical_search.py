@@ -16,9 +16,10 @@ BM25 hoạt động thế nào:
 """
 
 from pathlib import Path
+from task4_chunking_indexing import load_documents
 
 # TODO: Load corpus từ data/standardized/ hoặc từ vector store
-CORPUS: list[dict] = []  # List of {'content': str, 'metadata': dict}
+CORPUS: list[dict] = load_documents()  # List of {'content': str, 'metadata': dict}
 
 
 def build_bm25_index(corpus: list[dict]):
@@ -30,14 +31,28 @@ def build_bm25_index(corpus: list[dict]):
     """
     # TODO: Implement BM25 index
     #
-    # from rank_bm25 import BM25Okapi
+    from rank_bm25 import BM25Okapi
     #
     # # Tokenize - có thể đơn giản split(), hoặc dùng underthesea cho tiếng Việt
-    # tokenized_corpus = [doc["content"].lower().split() for doc in corpus]
-    # bm25 = BM25Okapi(tokenized_corpus)
-    # return bm25
+    tokenized_corpus = [doc["content"].lower().split() for doc in corpus]
+    bm25 = BM25Okapi(tokenized_corpus)
+    return bm25
     raise NotImplementedError("Implement build_bm25_index")
 
+def build_tf_idf_index(corpus: list[dict]):
+    """
+    Xây dựng TF-IDF index từ corpus.
+
+    Args:
+        corpus: List of {'content': str, 'metadata': dict}
+    """
+    # TODO: Implement TF-IDF index
+    tokenized_corpus = [doc["content"].lower().split() for doc in corpus]
+    from sklearn.feature_extraction.text import TfidfVectorizer
+    vectorizer = TfidfVectorizer()
+    tfidf_matrix = vectorizer.fit_transform([' '.join(tokens) for tokens in tokenized_corpus])
+    return vectorizer, tfidf_matrix
+    raise NotImplementedError("Implement build_tf_idf_index")
 
 def lexical_search(query: str, top_k: int = 10) -> list[dict]:
     """
@@ -57,22 +72,23 @@ def lexical_search(query: str, top_k: int = 10) -> list[dict]:
     """
     # TODO: Implement lexical search
     #
-    # tokenized_query = query.lower().split()
-    # scores = bm25.get_scores(tokenized_query)
+    tokenized_query = query.lower().split()
+    bm25 = build_bm25_index(CORPUS)
+    scores = bm25.get_scores(tokenized_query)
     #
     # # Get top_k indices
-    # import numpy as np
-    # top_indices = np.argsort(scores)[::-1][:top_k]
+    import numpy as np
+    top_indices = np.argsort(scores)[::-1][:top_k]
     #
-    # results = []
-    # for idx in top_indices:
-    #     if scores[idx] > 0:
-    #         results.append({
-    #             "content": CORPUS[idx]["content"],
-    #             "score": float(scores[idx]),
-    #             "metadata": CORPUS[idx]["metadata"]
-    #         })
-    # return results
+    results = []
+    for idx in top_indices:
+        if scores[idx] > 0:
+            results.append({
+                "content": CORPUS[idx]["content"],
+                "score": float(scores[idx]),
+                "metadata": CORPUS[idx]["metadata"]
+            })
+    return results
     raise NotImplementedError("Implement lexical_search")
 
 
