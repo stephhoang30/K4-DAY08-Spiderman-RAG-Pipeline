@@ -7,7 +7,9 @@ import { cn } from "@/lib/utils";
 
 /**
  * Ô nhập truy vấn + nút chạy + các truy vấn mẫu.
- * Hai truy vấn cuối cố tình lạc đề để demo nhánh PageIndex fallback.
+ * Hai truy vấn cuối cố tình lạc đề để demo nhánh PageIndex fallback. Truy vấn
+ * "vé máy bay" thì ngược lại: nghe lạc đề nhưng cosine vẫn trên ngưỡng nên
+ * KHÔNG được gắn cờ `offTopic`.
  */
 export function QueryBar({
   value,
@@ -90,7 +92,9 @@ export function QueryBar({
       </div>
       <p className="mt-2 text-[11px] leading-relaxed text-fg-subtle">
         Truy vấn tự do không khớp kho tri thức sẽ được dựng thành một lượt chạy lạc
-        đề: điểm cosine gốc thấp, nhánh PageIndex kích hoạt.
+        đề: điểm cosine gốc thấp, nhánh PageIndex kích hoạt. Ngược lại, truy vấn
+        &ldquo;vé máy bay&rdquo; cho thấy một câu hỏi ngoài phạm vi vẫn có thể đạt
+        cosine trên ngưỡng và lọt qua.
       </p>
     </div>
   );

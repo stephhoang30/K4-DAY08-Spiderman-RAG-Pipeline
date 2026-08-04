@@ -57,10 +57,10 @@ export const MOCK_CONVERSATIONS: Conversation[] = [
     messages: [...turn("ans_prohibited_items", "2026-08-03T11:05:00+07:00")],
   },
   {
-    id: "conv_fallback_demo",
-    title: "Đổi trả vé máy bay (PageIndex fallback)",
+    id: "conv_threshold_limit",
+    title: "Đổi trả vé máy bay (cosine cao, không fallback)",
     updatedAt: "2026-08-02T20:14:00+07:00",
-    messages: [...turn("ans_fallback_travel", "2026-08-02T20:14:00+07:00")],
+    messages: [...turn("ans_travel_high_cosine", "2026-08-02T20:14:00+07:00")],
   },
   {
     id: "conv_cross_border",

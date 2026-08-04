@@ -159,7 +159,7 @@ function ThresholdScale({
   );
 }
 
-/** Bảng: cùng một ngưỡng, cả năm truy vấn mẫu cho ra phán quyết thế nào. */
+/** Bảng: cùng một ngưỡng, toàn bộ truy vấn mẫu cho ra phán quyết thế nào. */
 function CrossQueryTable({
   runs,
   currentId,
@@ -414,20 +414,30 @@ export function FallbackThresholdLab({
         </ScoreCard>
       </div>
 
-      {/* Cùng một ngưỡng, năm truy vấn */}
+      {/* Cùng một ngưỡng, toàn bộ truy vấn mẫu */}
       <div className="space-y-2">
         <h3 className="text-[13px] font-semibold text-fg">
-          Cùng ngưỡng {threshold.toFixed(3)}, năm truy vấn mẫu cho phán quyết thế nào
+          Cùng ngưỡng {threshold.toFixed(3)}, {runs.length} truy vấn mẫu cho phán
+          quyết thế nào
         </h3>
         <CrossQueryTable runs={runs} currentId={run.id} threshold={threshold} />
         <p className="text-[11px] leading-relaxed text-fg-subtle">
-          Cột &ldquo;theo cosine&rdquo; tách được truy vấn đúng chủ đề khỏi truy vấn
-          lạc đề. Cột &ldquo;theo RRF&rdquo; cho ra{" "}
+          Cột &ldquo;theo cosine&rdquo; ít nhất còn phân biệt được các dòng với
+          nhau. Cột &ldquo;theo RRF&rdquo; cho ra{" "}
           <strong className="text-fg-muted">cùng một phán quyết ở mọi dòng</strong> —
           đó chính là lý do không được lấy điểm RRF làm ngưỡng.
           {rrfTriggered
-            ? " Ở ngưỡng này, RRF bắt cả năm truy vấn chạy PageIndex."
+            ? ` Ở ngưỡng này, RRF bắt cả ${runs.length} truy vấn chạy PageIndex.`
             : " Ở ngưỡng này, RRF không bắt truy vấn nào chạy PageIndex, kể cả câu hỏi về phở bò."}
+        </p>
+        <p className="text-[11px] leading-relaxed text-fg-subtle">
+          Nhưng cosine cũng không phải căn cứ hoàn hảo: câu &ldquo;Shopee có chính
+          sách đổi trả vé máy bay và tour du lịch không?&rdquo; đạt{" "}
+          <strong className="text-fg-muted">0.638</strong> — ngoài phạm vi kho tri
+          thức mà vẫn nằm trên ngưỡng mặc định, nên không kích hoạt fallback. Cụm
+          &ldquo;chính sách đổi trả&rdquo; đủ để kéo vector về đúng Chính sách Trả
+          hàng/Hoàn tiền. Một ngưỡng cosine đơn lẻ chỉ chặn được câu hỏi lạc đề{" "}
+          <em>về mặt từ ngữ</em>, không chặn được câu hỏi mà kho không có đáp án.
         </p>
       </div>
 
