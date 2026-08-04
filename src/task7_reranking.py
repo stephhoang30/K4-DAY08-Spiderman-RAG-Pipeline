@@ -58,9 +58,6 @@ def rerank_cross_encoder(
     Returns:
         List of top_k candidates, re-scored và sorted by rerank_score descending.
     """
-    # TODO: Implement cross-encoder reranking
-    #
-    # Option A: Jina Reranker API
     import requests
     response = requests.post(
         "https://api.jina.ai/v1/rerank",
