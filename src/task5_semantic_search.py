@@ -58,7 +58,7 @@ def semantic_search(query: str, top_k: int = 10) -> list[dict]:
     distances = results.get("distances", [[]])[0]
 
     # Bước 3: Chuẩn hóa kết quả
-    output: list[dict[str, Any]] = []
+    output: list[dict[str, any]] = []
 
     for document, metadata, distance in zip(
         documents,
