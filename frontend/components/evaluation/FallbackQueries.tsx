@@ -106,6 +106,18 @@ export function FallbackQueries() {
         hệ thống trả lời an toàn khi hybrid search không tìm được đoạn đủ liên quan,
         nhưng nó dừng ở mức mục nên vẫn không cứu được ca chunk bị cắt hỏng như G08.
       </p>
+      <p className="text-[11px] leading-relaxed text-fg-subtle">
+        Chiều ngược lại còn đáng lưu ý hơn:{" "}
+        <strong className="text-fg-muted">
+          ngưỡng cosine bỏ lọt nhiều câu hỏi lạc đề
+        </strong>
+        . Câu &ldquo;Shopee có chính sách đổi trả vé máy bay và tour du lịch
+        không?&rdquo; đo được cosine {formatScore(0.6379)} — cao hơn hẳn{" "}
+        {THRESHOLD.toFixed(2)} nên PageIndex không hề chạy, dù kho tri thức không có
+        tài liệu nào về du lịch. Cụm &ldquo;chính sách đổi trả&rdquo; đã kéo bge-m3
+        về đúng Chính sách Trả hàng/Hoàn tiền. Cosine đo độ giống ngữ nghĩa, không
+        đo việc câu hỏi có đáp án trong kho.
+      </p>
     </div>
   );
 }

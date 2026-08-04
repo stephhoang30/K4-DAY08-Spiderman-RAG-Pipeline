@@ -189,10 +189,11 @@ def rerank(
     if method == "cross_encoder":
         return rerank_cross_encoder(query, candidates, top_k)
     elif method == "mmr":
-        return rerank_mmr(query, candidates, top_k)
+        from .task4_chunking_indexing import get_embedding_model
+        query_embedding = get_embedding_model().encode(query, normalize_embeddings=True).tolist()
+        return rerank_mmr(query_embedding, candidates, top_k)
     elif method == "rrf":
-        # RRF cần nhiều ranked lists - gọi riêng
-        return rerank_rrf(query, candidates, top_k)
+        return rerank_rrf([candidates], top_k)
     else:
         raise ValueError(f"Unknown rerank method: {method}")
 
