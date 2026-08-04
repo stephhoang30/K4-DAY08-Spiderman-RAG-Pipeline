@@ -110,9 +110,10 @@ function ComparisonChart() {
                       fill={SERIES_COLOR[config.id]}
                       opacity={config.isPrimary ? 1 : 0.82}
                     >
+                      {/* Phải là MỘT chuỗi: React không nhận <title> có nhiều
+                          children (text xen biểu thức), sẽ cảnh báo ở mọi lần render. */}
                       <title>
-                        {config.label} · {METRIC_META[metricId].label} ={" "}
-                        {formatScore(value)}
+                        {`${config.label} · ${METRIC_META[metricId].label} = ${formatScore(value)}`}
                       </title>
                     </rect>
                     <text

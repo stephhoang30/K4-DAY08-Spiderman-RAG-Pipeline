@@ -78,8 +78,11 @@ export function Welcome({ onPick }: { onPick: (q: string) => void }) {
           ))}
         </ul>
         <p className="mt-3 text-center text-[11px] text-fg-subtle">
-          Thử một câu lạc đề (ví dụ &ldquo;Shopee có chính sách đổi trả vé máy bay và
-          tour du lịch không?&rdquo;) để xem nhánh PageIndex fallback được kích hoạt.
+          Thử một câu lạc đề hẳn (ví dụ &ldquo;Cách nấu phở bò ngon tại nhà?&rdquo;)
+          để xem nhánh PageIndex fallback được kích hoạt — rồi thử tiếp
+          &ldquo;Shopee có chính sách đổi trả vé máy bay và tour du lịch
+          không?&rdquo; để thấy một câu nghe cũng lạc đề nhưng cosine vẫn vượt
+          ngưỡng.
         </p>
       </div>
     </div>

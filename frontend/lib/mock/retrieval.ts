@@ -17,8 +17,9 @@ import { formatScore, normalizeQuery } from "@/lib/utils";
  *
  * Toàn bộ số liệu được rút ra từ `MOCK_ANSWERS` — trang này không định nghĩa lại
  * pipeline, chỉ xếp bốn tầng (semantic / BM25 / RRF / rerank) cạnh nhau để so sánh.
- * Riêng truy vấn lạc đề hoàn toàn ("cách nấu phở bò") được dựng thêm ở đây vì
- * `buildDefaultAnswer` trong answers.ts chỉ có 3 bước, không đủ để so bốn cột.
+ * Riêng hai truy vấn lạc đề hoàn toàn ("cách nấu phở bò" và chuỗi rác
+ * "xyzabc123nonsense") được dựng thêm ở đây vì `buildDefaultAnswer` trong
+ * answers.ts chỉ có 3 bước, không đủ để so bốn cột.
  */
 
 const { rrfK, fallbackThreshold } = PIPELINE_CONFIG;
@@ -229,7 +230,12 @@ function buildRun(seed: RunSeed, offTopic: boolean): RetrievalRun {
 
 /**
  * Chunk "gần nhất" mà vector search moi ra khi truy vấn không dính gì tới kho
- * tri thức: điểm cosine rất thấp nhưng vẫn có thứ hạng 1, 2, 3…
+ * tri thức: điểm cosine thấp nhưng vẫn có thứ hạng 1, 2, 3…
+ *
+ * Dải điểm lấy từ hai phép đo thật: "Cách nấu phở bò ngon tại nhà?" cho top-1
+ * 0.3739, còn chuỗi rác "xyzabc123nonsense" cho 0.4206. Cosine của bge-m3 không
+ * bao giờ tụt về 0 — đây là lý do ngưỡng 0.48 phải đặt khá cao chứ không phải
+ * quanh 0.1 như trực giác thường nghĩ.
  */
 const OFF_TOPIC_DENSE = [
   "chunk_0126",
@@ -238,7 +244,7 @@ const OFF_TOPIC_DENSE = [
   "chunk_0167",
   "chunk_0043",
 ];
-const OFF_TOPIC_COSINE = [0.213, 0.198, 0.176, 0.164, 0.151];
+const OFF_TOPIC_COSINE = [0.3739, 0.3512, 0.3388, 0.3214, 0.3067];
 const OFF_TOPIC_SPARSE = ["chunk_0126", "chunk_0087", "chunk_0042"];
 const OFF_TOPIC_BM25 = [1.84, 1.12, 0.76];
 const OFF_TOPIC_RERANK = [0.0412, 0.0231, 0.0157, 0.0104, 0.0061];
@@ -268,11 +274,16 @@ function queryTokens(query: string): string[] {
   return normalizeQuery(query).split(" ").filter(Boolean).slice(0, 6);
 }
 
-function buildOffTopicSteps(query: string, topCosine: number): PipelineStep[] {
+function buildOffTopicSteps(
+  query: string,
+  topCosine: number,
+  /** Thời gian bước semantic = sinh embedding + truy vấn ChromaDB (~1ms). */
+  semanticMs: number,
+): PipelineStep[] {
   // Dịch cả dải cosine để top-1 đúng bằng `topCosine` yêu cầu.
   const shift = topCosine - OFF_TOPIC_COSINE[0];
   const cosines = OFF_TOPIC_COSINE.map((value) =>
-    Number((value + shift).toFixed(3)),
+    Number((value + shift).toFixed(4)),
   );
   const rows = buildMergeRows(OFF_TOPIC_DENSE, OFF_TOPIC_SPARSE);
 
@@ -281,7 +292,7 @@ function buildOffTopicSteps(query: string, topCosine: number): PipelineStep[] {
       id: "semantic",
       title: "Semantic Search",
       subtitle: `${PIPELINE_CONFIG.vectorStore} · ${PIPELINE_CONFIG.embeddingModel}`,
-      durationMs: 351,
+      durationMs: semanticMs,
       status: "done",
       detail: {
         kind: "semantic",
@@ -289,7 +300,7 @@ function buildOffTopicSteps(query: string, topCosine: number): PipelineStep[] {
         dimensions: PIPELINE_CONFIG.embeddingDim,
         metric: PIPELINE_CONFIG.similarity,
         collection: PIPELINE_CONFIG.collection,
-        candidates: 214,
+        candidates: 206,
         topK: OFF_TOPIC_DENSE.length,
         hits: OFF_TOPIC_DENSE.map((chunkId, i) => ({
           chunkId,
@@ -309,8 +320,8 @@ function buildOffTopicSteps(query: string, topCosine: number): PipelineStep[] {
         algorithm: PIPELINE_CONFIG.lexicalAlgorithm,
         k1: PIPELINE_CONFIG.bm25K1,
         b: PIPELINE_CONFIG.bm25B,
-        corpusSize: 214,
-        avgDocLength: 196.4,
+        corpusSize: 206,
+        avgDocLength: 189.6,
         tokens: queryTokens(query),
         hits: OFF_TOPIC_SPARSE.map((chunkId, i) => ({
           chunkId,
@@ -422,13 +433,26 @@ function buildOffTopicSteps(query: string, topCosine: number): PipelineStep[] {
 }
 
 const OFF_TOPIC_QUESTION = "Cách nấu phở bò ngon tại nhà?";
-
+/** Đo thật: embed 173ms + truy vấn ChromaDB 1.0ms, cosine top-1 = 0.3739. */
 const OFF_TOPIC_RUN = buildRun(
   {
     id: "run_off_topic_pho",
     question: OFF_TOPIC_QUESTION,
-    steps: buildOffTopicSteps(OFF_TOPIC_QUESTION, 0.213),
-    totalMs: 2747,
+    steps: buildOffTopicSteps(OFF_TOPIC_QUESTION, 0.3739, 174),
+    totalMs: 2580,
+    usedFallback: true,
+  },
+  true,
+);
+
+const NONSENSE_QUESTION = "xyzabc123nonsense";
+/** Đo thật: cosine top-1 = 0.4206 — chuỗi vô nghĩa vẫn không rơi về 0. */
+const NONSENSE_RUN = buildRun(
+  {
+    id: "run_off_topic_nonsense",
+    question: NONSENSE_QUESTION,
+    steps: buildOffTopicSteps(NONSENSE_QUESTION, 0.4206, 96),
+    totalMs: 2500,
     usedFallback: true,
   },
   true,
@@ -440,8 +464,8 @@ export function buildOffTopicRun(query: string): RetrievalRun {
     {
       id: `run_free_${normalizeQuery(query).replace(/\s+/g, "_").slice(0, 40)}`,
       question: query.trim(),
-      steps: buildOffTopicSteps(query, 0.198),
-      totalMs: 2747,
+      steps: buildOffTopicSteps(query, 0.4206, 96),
+      totalMs: 2500,
       usedFallback: true,
     },
     true,
@@ -462,13 +486,21 @@ function runByAnswerId(id: string): RetrievalRun {
   return found;
 }
 
-/** Năm truy vấn mẫu bấm được — hai truy vấn cuối dùng để demo nhánh fallback. */
+/**
+ * Sáu truy vấn mẫu bấm được:
+ * - ba câu đầu đúng chủ đề, cosine 0.68–0.79 → fallback không kích hoạt;
+ * - câu thứ tư (vé máy bay) NGHE thì lạc đề nhưng cosine đo thật vẫn 0.638,
+ *   vượt ngưỡng 0.48 → fallback cũng không kích hoạt. Đây là ca cho thấy giới
+ *   hạn của ngưỡng cosine, không phải ca demo fallback;
+ * - hai câu cuối mới thật sự tụt dưới ngưỡng (0.374 và 0.421).
+ */
 export const RETRIEVAL_RUNS: RetrievalRun[] = [
   runByAnswerId("ans_return_deadline"),
   runByAnswerId("ans_payment_methods"),
   runByAnswerId("ans_refund_evidence"),
-  runByAnswerId("ans_fallback_travel"),
+  runByAnswerId("ans_travel_high_cosine"),
   OFF_TOPIC_RUN,
+  NONSENSE_RUN,
 ];
 
 export const RETRIEVAL_SAMPLES: RetrievalSample[] = [
@@ -491,15 +523,23 @@ export const RETRIEVAL_SAMPLES: RetrievalSample[] = [
     offTopic: false,
   },
   {
+    // Không gắn cờ lạc đề: cosine đo thật là 0.638 ≥ 0.48 nên pipeline vẫn coi
+    // đây là truy vấn đúng chủ đề — chính là điểm cần mổ xẻ trên lớp.
     id: RETRIEVAL_RUNS[3].id,
     question: RETRIEVAL_RUNS[3].question,
-    label: "Vé máy bay, tour du lịch",
-    offTopic: true,
+    label: "Vé máy bay — cosine vẫn cao",
+    offTopic: false,
   },
   {
     id: RETRIEVAL_RUNS[4].id,
     question: RETRIEVAL_RUNS[4].question,
     label: "Cách nấu phở bò",
+    offTopic: true,
+  },
+  {
+    id: RETRIEVAL_RUNS[5].id,
+    question: RETRIEVAL_RUNS[5].question,
+    label: "Chuỗi ký tự vô nghĩa",
     offTopic: true,
   },
 ];

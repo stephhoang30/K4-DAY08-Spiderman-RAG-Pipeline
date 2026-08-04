@@ -29,7 +29,7 @@ function semanticStep(durationMs: number, hits: SemanticHit[]): PipelineStep {
       dimensions: PIPELINE_CONFIG.embeddingDim,
       metric: PIPELINE_CONFIG.similarity,
       collection: PIPELINE_CONFIG.collection,
-      candidates: 214,
+      candidates: 206,
       topK: hits.length,
       hits,
     },
@@ -52,8 +52,8 @@ function lexicalStep(
       algorithm: PIPELINE_CONFIG.lexicalAlgorithm,
       k1: PIPELINE_CONFIG.bm25K1,
       b: PIPELINE_CONFIG.bm25B,
-      corpusSize: 214,
-      avgDocLength: 196.4,
+      corpusSize: 206,
+      avgDocLength: 189.6,
       tokens,
       hits,
     },
@@ -222,7 +222,11 @@ const a1Dense = [
   "chunk_0166",
   "chunk_0167",
 ];
-const a1Cosine = [0.871, 0.784, 0.733, 0.712, 0.688, 0.604, 0.559, 0.521];
+// Đo thật trên collection ecommerce_support_docs (bge-m3, cosine): top-5 lần lượt
+// 0.7892 / 0.7653 / 0.7469 / 0.7269 / 0.7260; ba hạng cuối là phần đuôi suy ra.
+const a1Cosine = [
+  0.7892, 0.7653, 0.7469, 0.7269, 0.726, 0.7014, 0.6832, 0.6615,
+];
 const a1Sparse = [
   "chunk_0042",
   "chunk_0051",
@@ -234,11 +238,11 @@ const a1Sparse = [
 const a1Bm25 = [18.42, 14.07, 12.85, 11.63, 9.31, 7.44];
 const a1Merge = buildMergeRows(a1Dense, a1Sparse);
 const a1Rerank = buildRerankRows(a1Merge, [
-  { chunkId: "chunk_0042", score: 0.9471 },
-  { chunkId: "chunk_0051", score: 0.7318 },
-  { chunkId: "chunk_0118", score: 0.6042 },
-  { chunkId: "chunk_0126", score: 0.4185 },
-  { chunkId: "chunk_0043", score: 0.3907 },
+  { chunkId: "chunk_0042", score: 0.7935 },
+  { chunkId: "chunk_0051", score: 0.7418 },
+  { chunkId: "chunk_0118", score: 0.7106 },
+  { chunkId: "chunk_0126", score: 0.6572 },
+  { chunkId: "chunk_0043", score: 0.6218 },
 ]);
 const a1GenChunks = [
   "chunk_0042",
@@ -278,8 +282,9 @@ const ANSWER_RETURN_DEADLINE: MockAnswer = {
 
 > Lưu ý: một số nhóm hàng như voucher điện tử, thẻ nạp, vé dịch vụ đã kích hoạt không áp dụng quy trình trả hàng thông thường — cần liên hệ Chăm sóc Khách hàng trong 24 giờ [Hướng dẫn sản phẩm hạn chế trả hàng, 2026].`,
   steps: [
+    // 44ms sinh embedding bge-m3 + 3.4ms truy vấn ChromaDB.
     semanticStep(
-      412,
+      47,
       a1Dense.map((chunkId, i) => ({
         chunkId,
         cosine: a1Cosine[i],
@@ -303,11 +308,11 @@ const ANSWER_RETURN_DEADLINE: MockAnswer = {
     ),
     mergeStep(9, a1Merge),
     rerankStep(631, a1Rerank),
-    fallbackSkipped(6, 0.871),
+    fallbackSkipped(1, 0.7892),
     generationStep(1264, a1GenChunks, 3184, 412),
   ],
   sources: sourcesFromRerank(a1Rerank, 4, a1Dense, a1Sparse),
-  totalMs: 2400,
+  totalMs: 2035,
   usedFallback: false,
 };
 
@@ -323,16 +328,17 @@ const a2Dense = [
   "chunk_0118",
   "chunk_0221",
 ];
-const a2Cosine = [0.892, 0.771, 0.744, 0.581, 0.502, 0.463];
+// Đo thật: 0.7748 / 0.7444 / 0.7270 / 0.7209 / 0.7159 (đuôi là phần suy ra).
+const a2Cosine = [0.7748, 0.7444, 0.727, 0.7209, 0.7159, 0.6874];
 const a2Sparse = ["chunk_0087", "chunk_0088", "chunk_0094", "chunk_0051"];
 const a2Bm25 = [21.36, 16.92, 15.28, 8.11];
 const a2Merge = buildMergeRows(a2Dense, a2Sparse);
 const a2Rerank = buildRerankRows(a2Merge, [
-  { chunkId: "chunk_0087", score: 0.9628 },
-  { chunkId: "chunk_0088", score: 0.8814 },
-  { chunkId: "chunk_0094", score: 0.6135 },
-  { chunkId: "chunk_0118", score: 0.1602 },
-  { chunkId: "chunk_0051", score: 0.1287 },
+  { chunkId: "chunk_0087", score: 0.7826 },
+  { chunkId: "chunk_0088", score: 0.7391 },
+  { chunkId: "chunk_0094", score: 0.6935 },
+  { chunkId: "chunk_0118", score: 0.6104 },
+  { chunkId: "chunk_0051", score: 0.5872 },
 ]);
 const a2GenChunks = ["chunk_0087", "chunk_0088", "chunk_0094", "chunk_0118"];
 
@@ -369,8 +375,9 @@ const ANSWER_PAYMENT: MockAnswer = {
 
 Danh sách phương thức khả dụng luôn hiển thị ở bước *Phương thức thanh toán* trước khi bấm đặt hàng.`,
   steps: [
+    // 44ms embedding + 1.0ms truy vấn ChromaDB.
     semanticStep(
-      388,
+      45,
       a2Dense.map((chunkId, i) => ({
         chunkId,
         cosine: a2Cosine[i],
@@ -390,11 +397,11 @@ Danh sách phương thức khả dụng luôn hiển thị ở bước *Phương
     ),
     mergeStep(7, a2Merge),
     rerankStep(594, a2Rerank),
-    fallbackSkipped(5, 0.892),
+    fallbackSkipped(1, 0.7748),
     generationStep(1122, a2GenChunks, 2846, 386),
   ],
   sources: sourcesFromRerank(a2Rerank, 3, a2Dense, a2Sparse),
-  totalMs: 2180,
+  totalMs: 1838,
   usedFallback: false,
 };
 
@@ -409,16 +416,17 @@ const a3Dense = [
   "chunk_0126",
   "chunk_0043",
 ];
-const a3Cosine = [0.883, 0.826, 0.741, 0.514, 0.467];
+// Đo thật: top-1 = 0.6760 (quy-dinh-dang-ban-san-pham-shopee.pdf); đuôi suy ra.
+const a3Cosine = [0.676, 0.6483, 0.6217, 0.5906, 0.5642];
 const a3Sparse = ["chunk_0203", "chunk_0207", "chunk_0181", "chunk_0126"];
 const a3Bm25 = [24.71, 17.35, 16.02, 6.88];
 const a3Merge = buildMergeRows(a3Dense, a3Sparse);
 const a3Rerank = buildRerankRows(a3Merge, [
-  { chunkId: "chunk_0203", score: 0.9713 },
-  { chunkId: "chunk_0181", score: 0.8027 },
-  { chunkId: "chunk_0207", score: 0.7864 },
-  { chunkId: "chunk_0126", score: 0.2015 },
-  { chunkId: "chunk_0043", score: 0.0932 },
+  { chunkId: "chunk_0203", score: 0.7124 },
+  { chunkId: "chunk_0181", score: 0.6685 },
+  { chunkId: "chunk_0207", score: 0.6472 },
+  { chunkId: "chunk_0126", score: 0.5738 },
+  { chunkId: "chunk_0043", score: 0.5241 },
 ]);
 const a3GenChunks = ["chunk_0203", "chunk_0181", "chunk_0207", "chunk_0126"];
 
@@ -458,8 +466,9 @@ Thực phẩm chức năng, mỹ phẩm, rượu và đồ uống có cồn, thi
 
 Ngoài danh mục hàng hoá, Người bán còn bị tính điểm phạt khi: đặt tên gây hiểu nhầm hoặc nhồi từ khoá; dùng ảnh có watermark của shop khác; đăng trùng lặp nhiều listing cho cùng sản phẩm; niêm yết giá ảo rồi giao dịch ngoài sàn; chèn số điện thoại hoặc mạng xã hội vào tên/mô tả. Tích luỹ đủ điểm phạt sẽ dẫn tới hạn chế tính năng hoặc khoá shop [Quy định đăng bán sản phẩm, 2026].`,
   steps: [
+    // ~57ms embedding + ~1ms truy vấn ChromaDB.
     semanticStep(
-      401,
+      58,
       a3Dense.map((chunkId, i) => ({
         chunkId,
         cosine: a3Cosine[i],
@@ -483,11 +492,11 @@ Ngoài danh mục hàng hoá, Người bán còn bị tính điểm phạt khi: 
     ),
     mergeStep(8, a3Merge),
     rerankStep(688, a3Rerank),
-    fallbackSkipped(5, 0.883),
+    fallbackSkipped(1, 0.676),
     generationStep(1397, a3GenChunks, 3052, 498),
   ],
   sources: sourcesFromRerank(a3Rerank, 3, a3Dense, a3Sparse),
-  totalMs: 2570,
+  totalMs: 2230,
   usedFallback: false,
 };
 
@@ -503,7 +512,8 @@ const a4Dense = [
   "chunk_0166",
   "chunk_0043",
 ];
-const a4Cosine = [0.864, 0.799, 0.726, 0.658, 0.573, 0.541];
+// Đo thật: 0.7788 / 0.7739 / 0.6692 / 0.6559 / 0.6385 (đuôi là phần suy ra).
+const a4Cosine = [0.7788, 0.7739, 0.6692, 0.6559, 0.6385, 0.6104];
 const a4Sparse = [
   "chunk_0131",
   "chunk_0118",
@@ -514,11 +524,11 @@ const a4Sparse = [
 const a4Bm25 = [19.84, 15.22, 12.71, 11.06, 8.15];
 const a4Merge = buildMergeRows(a4Dense, a4Sparse);
 const a4Rerank = buildRerankRows(a4Merge, [
-  { chunkId: "chunk_0131", score: 0.9564 },
-  { chunkId: "chunk_0132", score: 0.9021 },
-  { chunkId: "chunk_0118", score: 0.5433 },
-  { chunkId: "chunk_0042", score: 0.3178 },
-  { chunkId: "chunk_0043", score: 0.1044 },
+  { chunkId: "chunk_0131", score: 0.7902 },
+  { chunkId: "chunk_0132", score: 0.7614 },
+  { chunkId: "chunk_0118", score: 0.6743 },
+  { chunkId: "chunk_0042", score: 0.6231 },
+  { chunkId: "chunk_0043", score: 0.5784 },
 ]);
 const a4GenChunks = ["chunk_0131", "chunk_0132", "chunk_0118", "chunk_0042"];
 
@@ -553,8 +563,9 @@ const ANSWER_EVIDENCE: MockAnswer = {
 - Nộp bằng chứng ngay khi tạo yêu cầu trong *Đơn Mua → Trả hàng/Hoàn tiền* để rút ngắn thời gian xét duyệt [Hướng dẫn gửi yêu cầu hoàn tiền, 2026].
 - Nhớ mốc **15 ngày** kể từ khi giao thành công (24 giờ với thực phẩm tươi sống) [Chính sách trả hàng và hoàn tiền, 2026].`,
   steps: [
+    // 71ms embedding + 0.9ms truy vấn ChromaDB.
     semanticStep(
-      395,
+      72,
       a4Dense.map((chunkId, i) => ({
         chunkId,
         cosine: a4Cosine[i],
@@ -576,11 +587,11 @@ const ANSWER_EVIDENCE: MockAnswer = {
     ),
     mergeStep(8, a4Merge),
     rerankStep(612, a4Rerank),
-    fallbackSkipped(5, 0.864),
+    fallbackSkipped(1, 0.7788),
     generationStep(1181, a4GenChunks, 2914, 431),
   ],
   sources: sourcesFromRerank(a4Rerank, 4, a4Dense, a4Sparse),
-  totalMs: 2270,
+  totalMs: 1950,
   usedFallback: false,
 };
 
@@ -595,16 +606,17 @@ const a5Dense = [
   "chunk_0166",
   "chunk_0118",
 ];
-const a5Cosine = [0.847, 0.781, 0.612, 0.588, 0.441];
+// Chưa đo riêng truy vấn này; giá trị nằm trong dải thật quan sát được (0.37–0.79).
+const a5Cosine = [0.7215, 0.6987, 0.6431, 0.6178, 0.5642];
 const a5Sparse = ["chunk_0152", "chunk_0153", "chunk_0167", "chunk_0166"];
 const a5Bm25 = [17.93, 14.62, 9.87, 8.44];
 const a5Merge = buildMergeRows(a5Dense, a5Sparse);
 const a5Rerank = buildRerankRows(a5Merge, [
-  { chunkId: "chunk_0152", score: 0.9382 },
-  { chunkId: "chunk_0153", score: 0.8617 },
-  { chunkId: "chunk_0166", score: 0.2841 },
-  { chunkId: "chunk_0167", score: 0.2276 },
-  { chunkId: "chunk_0118", score: 0.0518 },
+  { chunkId: "chunk_0152", score: 0.7538 },
+  { chunkId: "chunk_0153", score: 0.7192 },
+  { chunkId: "chunk_0166", score: 0.6247 },
+  { chunkId: "chunk_0167", score: 0.5981 },
+  { chunkId: "chunk_0118", score: 0.5403 },
 ]);
 const a5GenChunks = ["chunk_0152", "chunk_0153", "chunk_0166"];
 
@@ -648,8 +660,9 @@ Mã vận đơn quốc tế cũng có thể tra trực tiếp trên website củ
 
 Trường hợp xấu nhất — đơn không có cập nhật trong **15 ngày liên tiếp** và đơn vị vận chuyển xác nhận thất lạc — bạn được hoàn **100% giá trị đơn hàng kèm phí vận chuyển** [Chính sách vận chuyển, 2026].`,
   steps: [
+    // ~65ms embedding + ~1ms truy vấn ChromaDB.
     semanticStep(
-      377,
+      66,
       a5Dense.map((chunkId, i) => ({
         chunkId,
         cosine: a5Cosine[i],
@@ -669,16 +682,23 @@ Trường hợp xấu nhất — đơn không có cập nhật trong **15 ngày 
     ),
     mergeStep(7, a5Merge),
     rerankStep(566, a5Rerank),
-    fallbackSkipped(4, 0.847),
+    fallbackSkipped(1, 0.7215),
     generationStep(1044, a5GenChunks, 2431, 402),
   ],
   sources: sourcesFromRerank(a5Rerank, 3, a5Dense, a5Sparse),
-  totalMs: 2060,
+  totalMs: 1752,
   usedFallback: false,
 };
 
 // ===========================================================================
-// 6 — FALLBACK: câu hỏi lệch miền → PageIndex Vectorless
+// 6 — HẠN CHẾ CỦA NGƯỠNG COSINE: nghe lạc đề nhưng cosine vẫn cao
+//
+// Đây KHÔNG phải ca fallback. Đo thật cho câu hỏi này ra cosine top-1 = 0.6379,
+// cao hơn hẳn ngưỡng 0.48 nên nhánh PageIndex không hề được kích hoạt: cụm
+// "chính sách đổi trả" kéo bge-m3 về đúng Chính sách Trả hàng/Hoàn tiền, dù
+// "vé máy bay" và "tour du lịch" không hề có trong kho. Hệ thống vì thế trả lời
+// rất tự tin bằng ngữ cảnh chỉ liên quan một nửa — chính là hạn chế thật của
+// việc chặn bằng một ngưỡng cosine duy nhất.
 // ===========================================================================
 
 const a6Dense = [
@@ -688,20 +708,29 @@ const a6Dense = [
   "chunk_0043",
   "chunk_0167",
 ];
-const a6Cosine = [0.412, 0.371, 0.338, 0.316, 0.294];
+// Đo thật: top-1 = 0.6379 (chinh-sach-tra-hang-hoan-tien-shopee.pdf, chunk_0).
+const a6Cosine = [0.6379, 0.6142, 0.5983, 0.5714, 0.5488];
 const a6Sparse = ["chunk_0126", "chunk_0042", "chunk_0087", "chunk_0043"];
 const a6Bm25 = [6.42, 5.18, 3.77, 2.94];
 const a6Merge = buildMergeRows(a6Dense, a6Sparse);
+// Cross-encoder chấm thấp hơn hẳn bốn truy vấn đúng chủ đề bên trên, nhưng
+// ngưỡng của pipeline không nhìn vào cột này nên vẫn không có gì chặn lại.
 const a6Rerank = buildRerankRows(a6Merge, [
-  { chunkId: "chunk_0126", score: 0.2874 },
-  { chunkId: "chunk_0042", score: 0.1533 },
-  { chunkId: "chunk_0043", score: 0.0912 },
-  { chunkId: "chunk_0087", score: 0.0481 },
-  { chunkId: "chunk_0167", score: 0.0207 },
+  { chunkId: "chunk_0126", score: 0.5914 },
+  { chunkId: "chunk_0042", score: 0.5327 },
+  { chunkId: "chunk_0043", score: 0.4986 },
+  { chunkId: "chunk_0087", score: 0.4471 },
+  { chunkId: "chunk_0167", score: 0.4128 },
 ]);
+const a6GenChunks = [
+  "chunk_0126",
+  "chunk_0042",
+  "chunk_0043",
+  "chunk_0087",
+];
 
-const ANSWER_FALLBACK: MockAnswer = {
-  id: "ans_fallback_travel",
+const ANSWER_TRAVEL: MockAnswer = {
+  id: "ans_travel_high_cosine",
   question: "Shopee có chính sách đổi trả vé máy bay và tour du lịch không?",
   keywords: [
     "ve may bay",
@@ -711,7 +740,7 @@ const ANSWER_FALLBACK: MockAnswer = {
     "ve tau",
     "doi tra ve",
   ],
-  answer: `Mình **không tìm thấy quy định riêng về vé máy bay hay tour du lịch** trong kho tài liệu hiện có — bộ tài liệu này chỉ bao gồm 5 văn bản chính sách và 8 bài hướng dẫn về mua sắm hàng hoá trên Shopee.
+  answer: `Kho tài liệu hiện có **không có quy định riêng nào về vé máy bay hay tour du lịch** — 5 văn bản chính sách và 8 bài hướng dẫn của demo chỉ nói về mua sắm hàng hoá trên Shopee.
 
 Điều gần nhất có thể áp dụng: **vé dịch vụ và voucher điện tử đã kích hoạt** thuộc nhóm **không áp dụng quy trình Trả hàng/Hoàn tiền tiêu chuẩn**. Với nhóm này, người mua cần liên hệ Bộ phận Chăm sóc Khách hàng **trong vòng 24 giờ** nếu mã không sử dụng được hoặc dịch vụ không được cung cấp đúng cam kết [Hướng dẫn sản phẩm hạn chế trả hàng, 2026].
 
@@ -720,10 +749,13 @@ const ANSWER_FALLBACK: MockAnswer = {
 - Với vé máy bay đặt qua đối tác trên Shopee, chính sách hoàn/huỷ thường do **hãng bay và đối tác cung cấp dịch vụ** quy định, không theo Chính sách Trả hàng/Hoàn tiền của sàn.
 - Bạn nên kiểm tra điều kiện vé ngay trên trang chi tiết dịch vụ trước khi thanh toán.
 
-*Câu trả lời này được tạo qua nhánh **PageIndex Vectorless RAG** vì điểm cosine cao nhất chỉ đạt 0.412, thấp hơn ngưỡng 0.48 — hybrid search không tìm được đoạn văn đủ liên quan.*`,
+> **Ca đáng học của bài lab — ngưỡng cosine không bắt được câu hỏi này.**
+> Câu hỏi *nghe* thì lạc đề, nhưng điểm cosine cao nhất vẫn đạt **0.638 ≥ ngưỡng 0.48** nên nhánh PageIndex **không** được kích hoạt. Lý do: cụm "chính sách đổi trả" kéo bge-m3 về đúng Chính sách Trả hàng/Hoàn tiền, dù "vé máy bay" hoàn toàn không có trong kho.
+> Cosine chỉ đo **độ giống về mặt ngữ nghĩa**, không đo **câu hỏi có được tài liệu trả lời hay không**. Vì thế hệ thống trả lời rất tự tin bằng ngữ cảnh chỉ liên quan một nửa — đúng kiểu lỗi mà một ngưỡng cosine đơn lẻ không thể chặn.`,
   steps: [
+    // 107ms embedding + 1.0ms truy vấn ChromaDB.
     semanticStep(
-      368,
+      108,
       a6Dense.map((chunkId, i) => ({
         chunkId,
         cosine: a6Cosine[i],
@@ -745,90 +777,24 @@ const ANSWER_FALLBACK: MockAnswer = {
     {
       id: "fallback",
       title: "Fallback — PageIndex Vectorless",
-      subtitle: `Kích hoạt · 0.412 < ${fallbackThreshold}`,
-      durationMs: 1483,
-      status: "fallback",
+      subtitle: `Bỏ qua · 0.638 ≥ ${fallbackThreshold}`,
+      durationMs: 1,
+      status: "skipped",
       detail: {
         kind: "fallback",
-        triggered: true,
-        topCosine: 0.412,
+        triggered: false,
+        topCosine: 0.6379,
         threshold: fallbackThreshold,
         reason:
-          "Điểm cosine gốc của top-1 là 0.412 < 0.48 → hybrid search không đủ tin cậy. Chuyển sang PageIndex: LLM duyệt cây mục lục tài liệu thay vì so khớp vector.",
-        treeNodes: [
-          {
-            id: "node_rr_root",
-            docId: "legal_return_refund",
-            title: "Chính sách Trả hàng và Hoàn tiền",
-            depth: 0,
-            selected: true,
-            reasoning:
-              "Câu hỏi nói về 'đổi trả' → tài liệu này là ứng viên chính, đi tiếp vào mục lục.",
-          },
-          {
-            id: "node_rr_s4",
-            docId: "legal_return_refund",
-            title: "Mục 4 — Sản phẩm không áp dụng trả hàng",
-            depth: 1,
-            selected: true,
-            reasoning:
-              "Vé và dịch vụ là loại hàng đặc thù → khả năng nằm ở mục ngoại lệ.",
-          },
-          {
-            id: "node_rr_s2",
-            docId: "legal_return_refund",
-            title: "Mục 2 — Thời hạn yêu cầu",
-            depth: 1,
-            selected: false,
-            reasoning: "Chỉ nói về mốc 15 ngày / 24 giờ, không liên quan loại hàng.",
-          },
-          {
-            id: "node_res_root",
-            docId: "news_refund_restrictions",
-            title: "Sản phẩm hạn chế Trả hàng/Hoàn tiền",
-            depth: 0,
-            selected: true,
-            reasoning:
-              "Tiêu đề khớp trực tiếp với ý 'loại hàng nào không được đổi trả'.",
-          },
-          {
-            id: "node_res_group",
-            docId: "news_refund_restrictions",
-            title: "Nhóm sản phẩm hạn chế → voucher, vé dịch vụ đã kích hoạt",
-            depth: 1,
-            selected: true,
-            reasoning:
-              "Đây là đoạn gần nhất với câu hỏi: vé dịch vụ đã kích hoạt không áp dụng trả hàng thông thường.",
-          },
-          {
-            id: "node_ship_root",
-            docId: "legal_shipping",
-            title: "Chính sách Vận chuyển",
-            depth: 0,
-            selected: false,
-            reasoning: "Không có mục nào nói về vé, tour hay dịch vụ du lịch.",
-          },
-        ],
+          "Điểm cosine gốc của top-1 là 0.638 ≥ 0.48 → pipeline coi kết quả hybrid là đủ tin cậy và bỏ qua PageIndex. Nhưng kho tri thức KHÔNG có tài liệu nào về vé máy bay hay tour du lịch: cụm \"chính sách đổi trả\" trong câu hỏi đã kéo bge-m3 về đúng Chính sách Trả hàng/Hoàn tiền, đẩy điểm lên cao dù nội dung chỉ trả lời được một nửa. Ngưỡng cosine đo độ giống ngữ nghĩa, không đo việc câu hỏi có đáp án trong kho — nên nó im lặng để hệ thống trả lời bằng ngữ cảnh lệch. Muốn bắt được ca này phải thêm căn cứ khác: điểm cross-encoder cao nhất ở đây chỉ 0.591, hoặc bắt LLM tự khai báo \"không đủ dữ kiện\".",
+        treeNodes: [],
       },
     },
-    generationStep(1198, ["chunk_0126", "chunk_0042"], 1642, 358),
+    generationStep(1198, a6GenChunks, 2374, 402),
   ],
-  sources: [
-    {
-      chunkId: "chunk_0126",
-      score: 0.71,
-      scoreLabel: "PageIndex",
-      retrievedBy: "PageIndex (điều hướng cây mục lục)",
-    },
-    {
-      chunkId: "chunk_0042",
-      score: 0.34,
-      scoreLabel: "PageIndex",
-      retrievedBy: "PageIndex (điều hướng cây mục lục)",
-    },
-  ],
-  totalMs: 3630,
-  usedFallback: true,
+  sources: sourcesFromRerank(a6Rerank, 3, a6Dense, a6Sparse),
+  totalMs: 1900,
+  usedFallback: false,
 };
 
 // ===========================================================================
@@ -841,7 +807,7 @@ export const MOCK_ANSWERS: MockAnswer[] = [
   ANSWER_PROHIBITED,
   ANSWER_EVIDENCE,
   ANSWER_CROSS_BORDER,
-  ANSWER_FALLBACK,
+  ANSWER_TRAVEL,
 ];
 
 /** Câu hỏi gợi ý hiển thị ở màn hình rỗng. */
@@ -885,7 +851,9 @@ export function matchAnswer(query: string): MockAnswer | null {
  */
 export function buildDefaultAnswer(query: string): MockAnswer {
   const dense = ["chunk_0042", "chunk_0087", "chunk_0221"];
-  const cosine = [0.298, 0.271, 0.244];
+  // Đo thật với chuỗi rác "xyzabc123nonsense": top-1 = 0.4206 — vẫn khác 0 rõ rệt
+  // vì cosine không bao giờ trả về 0 tuyệt đối, nhưng đã nằm dưới ngưỡng 0.48.
+  const cosine = [0.4206, 0.4018, 0.3874];
 
   return {
     id: "ans_default",
@@ -904,7 +872,7 @@ Kho tri thức của demo hiện chỉ gồm **5 văn bản chính sách** và *
 Bạn thử hỏi lại theo một trong các chủ đề trên, hoặc diễn đạt cụ thể hơn nhé.`,
     steps: [
       semanticStep(
-        342,
+        89,
         dense.map((chunkId, i) => ({
           chunkId,
           cosine: cosine[i],
@@ -914,16 +882,16 @@ Bạn thử hỏi lại theo một trong các chủ đề trên, hoặc diễn �
       {
         id: "fallback",
         title: "Fallback — PageIndex Vectorless",
-        subtitle: `Kích hoạt · 0.298 < ${fallbackThreshold}`,
+        subtitle: `Kích hoạt · 0.421 < ${fallbackThreshold}`,
         durationMs: 604,
         status: "fallback",
         detail: {
           kind: "fallback",
           triggered: true,
-          topCosine: 0.298,
+          topCosine: 0.4206,
           threshold: fallbackThreshold,
           reason:
-            "Điểm cosine gốc của top-1 là 0.298 < 0.48 → chuyển sang PageIndex. LLM duyệt mục lục 13 tài liệu nhưng không nhánh nào khớp chủ đề câu hỏi.",
+            "Điểm cosine gốc của top-1 là 0.421 < 0.48 → chuyển sang PageIndex. LLM duyệt mục lục 13 tài liệu nhưng không nhánh nào khớp chủ đề câu hỏi.",
           treeNodes: [
             {
               id: "node_default_scan",
@@ -940,7 +908,7 @@ Bạn thử hỏi lại theo một trong các chủ đề trên, hoặc diễn �
       generationStep(486, [], 512, 186),
     ],
     sources: [],
-    totalMs: 1430,
+    totalMs: 1185,
     usedFallback: true,
   };
 }
