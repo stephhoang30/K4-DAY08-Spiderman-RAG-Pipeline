@@ -811,12 +811,26 @@ export const MOCK_ANSWERS: MockAnswer[] = [
 ];
 
 /** Câu hỏi gợi ý hiển thị ở màn hình rỗng. */
+/*
+ * Năm câu đầu có sẵn trace mock nên vẫn chạy được khi backend tắt.
+ * Bảy câu sau lấy từ group_project/evaluation/golden_dataset.json — đã kiểm trên
+ * kho thật: cả 7 truy xuất đúng tài liệu kỳ vọng ở TOP-1, cosine 0.68–0.84.
+ * Đều trên ngưỡng fallback 0.48 nên không câu nào rơi vào nhánh PageIndex —
+ * nhánh đó gọi dịch vụ ngoài nên chậm, không hợp để demo trực tiếp.
+ */
 export const SUGGESTED_QUESTIONS = [
   ANSWER_RETURN_DEADLINE.question,
   ANSWER_PAYMENT.question,
   ANSWER_PROHIBITED.question,
   ANSWER_EVIDENCE.question,
   ANSWER_CROSS_BORDER.question,
+  "Sản phẩm hạn chế trả hàng là gì và gồm những nhóm nào?",
+  "Thanh toán bằng mã QR trên Shopee thực hiện theo các bước nào?",
+  "Sau khi yêu cầu hoàn tiền được chấp nhận thì bao lâu nhận được tiền?",
+  "Ai chịu chi phí vận chuyển khi hoàn trả sản phẩm mua tại Shopee Mall?",
+  "Quy định về hình ảnh sản phẩm khi đăng bán là gì?",
+  "Thời Gian Shopee Đảm Bảo dùng để làm gì?",
+  "Hình thức trả góp bằng thẻ tín dụng có áp dụng cho đơn hàng quốc tế không?",
 ];
 
 export function getAnswerById(id: string): MockAnswer | undefined {
