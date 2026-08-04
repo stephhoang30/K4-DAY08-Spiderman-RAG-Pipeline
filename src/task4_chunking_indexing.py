@@ -30,81 +30,121 @@ chroma_db/ cũ trước khi reindex — nếu không, chunk cũ và mới sẽ t
 trong cùng collection, retrieval sẽ trả về kết quả rác từ dữ liệu cũ.
 """
 
+import re
 from pathlib import Path
 
 STANDARDIZED_DIR = Path(__file__).parent.parent / "data" / "standardized"
 CHROMA_DIR = Path(__file__).parent.parent / "chroma_db"
 
+FRONTMATTER_RE = re.compile(r"^---\n(.*?)\n---\n?", re.DOTALL)
+
 
 # =============================================================================
-# CONFIGURATION — Giải thích lựa chọn của bạn trong comment
+# CONFIGURATION
 # =============================================================================
 
-# TODO: Chọn chunking strategy và giải thích vì sao
-CHUNK_SIZE = 500        # Vì sao chọn 500? ...
-CHUNK_OVERLAP = 50      # Vì sao chọn 50? ...
+# CHUNK_SIZE=800: đủ dài để giữ nguyên ngữ cảnh 1 điều/khoản chính sách,
+# nhưng vẫn nhỏ hơn nhiều so với context window của LLM để tránh loãng thông tin.
+CHUNK_SIZE = 800
+# CHUNK_OVERLAP=100 (~12.5% của size): tránh câu văn quan trọng bị cắt đôi ngay
+# ranh giới giữa 2 chunk liên tiếp, mà không tạo quá nhiều trùng lặp dữ liệu.
+CHUNK_OVERLAP = 100
 CHUNKING_METHOD = "recursive"  # "recursive" | "markdown_header" | "semantic"
 
-# TODO: Chọn embedding model và giải thích
-EMBEDDING_MODEL = "BAAI/bge-m3"  # Vì sao? Multilingual, tốt cho tiếng Việt lẫn tiếng Anh
+# BAAI/bge-m3: multilingual, tốt cho tiếng Việt (đa số corpus là tiếng Việt),
+# hỗ trợ luôn tiếng Anh nếu tài liệu pha trộn ngôn ngữ.
+EMBEDDING_MODEL = "BAAI/bge-m3"
 EMBEDDING_DIM = 1024
 
-# TODO: Chọn vector store
 VECTOR_STORE = "chromadb"  # "chromadb" | "weaviate" | "faiss"
 COLLECTION_NAME = "ecommerce_support_docs"
+
+_embedding_model = None  # cache — tránh load lại model mỗi lần gọi get_embedding_model()
+_collection = None
 
 
 # =============================================================================
 # IMPLEMENTATION
 # =============================================================================
 
+def _parse_frontmatter(text: str) -> tuple[dict, str]:
+    """Tách YAML header (do Task 3 ghi) khỏi nội dung markdown."""
+    match = FRONTMATTER_RE.match(text)
+    if not match:
+        return {}, text
+
+    header, body = match.group(1), text[match.end():]
+    meta = {}
+    for line in header.splitlines():
+        if ":" not in line:
+            continue
+        key, _, value = line.partition(":")
+        meta[key.strip()] = value.strip().strip('"')
+    return meta, body
+
+
 def load_documents() -> list[dict]:
     """
     Đọc toàn bộ markdown files từ data/standardized/.
 
     Returns:
-        List of {'content': str, 'metadata': {'source': str, 'type': str}}
+        List of {'content': str, 'metadata': {'source': str, 'doc_type': str,
+                  'customer_role': str, 'url': str, 'title': str}}
     """
-    # TODO: Iterate qua STANDARDIZED_DIR, đọc .md files
-    # documents = []
-    # for md_file in STANDARDIZED_DIR.rglob("*.md"):
-    #     content = md_file.read_text(encoding="utf-8")
-    #     doc_type = "legal" if "legal" in str(md_file) else "news"
-    #     documents.append({
-    #         "content": content,
-    #         "metadata": {"source": md_file.name, "type": doc_type}
-    #     })
-    # return documents
-    raise NotImplementedError("Implement load_documents")
+    documents = []
+    for md_file in sorted(STANDARDIZED_DIR.rglob("*.md")):
+        text = md_file.read_text(encoding="utf-8")
+        meta, body = _parse_frontmatter(text)
+
+        doc_type = meta.get("doc_type") or ("legal" if "legal" in str(md_file) else "news")
+        documents.append({
+            "content": body.strip(),
+            "metadata": {
+                "source": meta.get("source", md_file.name),
+                "doc_type": doc_type,
+                "customer_role": meta.get("customer_role", "both"),
+                "url": meta.get("url", ""),
+                "title": meta.get("title", md_file.stem),
+            },
+        })
+    return documents
 
 
 def chunk_documents(documents: list[dict]) -> list[dict]:
     """
-    Chunk documents theo strategy đã chọn.
+    Chunk documents bằng RecursiveCharacterTextSplitter.
 
     Returns:
-        List of {'content': str, 'metadata': dict} — mỗi item là 1 chunk
+        List of {'content': str, 'metadata': dict} — mỗi item là 1 chunk,
+        metadata giữ nguyên source/doc_type/customer_role của document gốc
+        và thêm chunk_index.
     """
-    # TODO: Implement chunking
-    #
-    # Ví dụ với RecursiveCharacterTextSplitter:
-    # from langchain_text_splitters import RecursiveCharacterTextSplitter
-    #
-    # splitter = RecursiveCharacterTextSplitter(
-    #     chunk_size=CHUNK_SIZE,
-    #     chunk_overlap=CHUNK_OVERLAP,
-    #     separators=["\n\n", "\n", ". ", " ", ""]
-    # )
-    # chunks = []
-    # for doc in documents:
-    #     splits = splitter.split_text(doc["content"])
-    #     for i, chunk_text in enumerate(splits):
-    #         chunks.append({
-    #             "content": chunk_text,
-    #             "metadata": {**doc["metadata"], "chunk_index": i}
-    #         })
-    # return chunks
-    raise NotImplementedError("Implement chunk_documents")
+    from langchain_text_splitters import RecursiveCharacterTextSplitter
+
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=CHUNK_SIZE,
+        chunk_overlap=CHUNK_OVERLAP,
+        separators=["\n\n", "\n", ". ", " ", ""],
+    )
+
+    chunks = []
+    for doc in documents:
+        splits = splitter.split_text(doc["content"])
+        for i, chunk_text in enumerate(splits):
+            chunks.append({
+                "content": chunk_text,
+                "metadata": {**doc["metadata"], "chunk_index": i},
+            })
+    return chunks
+
+
+def get_embedding_model():
+    """Load (và cache) SentenceTransformer model dùng chung cho Task 4 & 5."""
+    global _embedding_model
+    if _embedding_model is None:
+        from sentence_transformers import SentenceTransformer
+        _embedding_model = SentenceTransformer(EMBEDDING_MODEL)
+    return _embedding_model
 
 
 def embed_chunks(chunks: list[dict]) -> list[dict]:
@@ -114,44 +154,39 @@ def embed_chunks(chunks: list[dict]) -> list[dict]:
     Returns:
         Mỗi chunk dict được thêm key 'embedding': list[float]
     """
-    # TODO: Implement embedding
-    #
-    # Ví dụ với sentence-transformers:
-    # from sentence_transformers import SentenceTransformer
-    #
-    # model = SentenceTransformer(EMBEDDING_MODEL)
-    # texts = [c["content"] for c in chunks]
-    # embeddings = model.encode(texts, show_progress_bar=True)
-    # for chunk, emb in zip(chunks, embeddings):
-    #     chunk["embedding"] = emb.tolist()
-    # return chunks
-    raise NotImplementedError("Implement embed_chunks")
+    model = get_embedding_model()
+    texts = [c["content"] for c in chunks]
+    embeddings = model.encode(texts, show_progress_bar=True, normalize_embeddings=True)
+    for chunk, emb in zip(chunks, embeddings):
+        chunk["embedding"] = emb.tolist()
+    return chunks
+
+
+def get_collection():
+    """Lấy (và cache) collection ChromaDB dùng chung cho Task 4 & 5."""
+    global _collection
+    if _collection is None:
+        import chromadb
+        CHROMA_DIR.mkdir(parents=True, exist_ok=True)
+        client = chromadb.PersistentClient(path=str(CHROMA_DIR))
+        _collection = client.get_or_create_collection(
+            name=COLLECTION_NAME,
+            metadata={"hnsw:space": "cosine"},
+        )
+    return _collection
 
 
 def index_to_vectorstore(chunks: list[dict]):
-    """
-    Lưu chunks vào vector store đã chọn.
-    """
-    # TODO: Implement indexing
-    #
-    # Ví dụ với ChromaDB:
-    # import chromadb
-    #
-    # CHROMA_DIR.mkdir(parents=True, exist_ok=True)
-    # client = chromadb.PersistentClient(path=str(CHROMA_DIR))
-    # collection = client.get_or_create_collection(
-    #     name=COLLECTION_NAME,
-    #     metadata={"hnsw:space": "cosine"},
-    # )
-    #
-    # ids = [f"{c['metadata']['source']}_chunk_{c['metadata']['chunk_index']}" for c in chunks]
-    # collection.upsert(
-    #     ids=ids,
-    #     documents=[c["content"] for c in chunks],
-    #     embeddings=[c["embedding"] for c in chunks],
-    #     metadatas=[c["metadata"] for c in chunks],
-    # )
-    raise NotImplementedError("Implement index_to_vectorstore")
+    """Lưu chunks (đã có embedding) vào ChromaDB."""
+    collection = get_collection()
+
+    ids = [f"{c['metadata']['source']}_chunk_{c['metadata']['chunk_index']}" for c in chunks]
+    collection.upsert(
+        ids=ids,
+        documents=[c["content"] for c in chunks],
+        embeddings=[c["embedding"] for c in chunks],
+        metadatas=[c["metadata"] for c in chunks],
+    )
 
 
 def run_pipeline():
