@@ -21,6 +21,9 @@ function assistantMessage(answer: MockAnswer, createdAt: string): ChatMessage {
     sources: answer.sources,
     totalMs: answer.totalMs,
     usedFallback: answer.usedFallback,
+    // Lịch sử hội thoại dựng sẵn là dữ liệu demo, kể cả khi backend đang chạy.
+    // Tự khai ra để khối trace mang nhãn "dữ liệu demo" chứ không im lặng.
+    source: "mock",
   };
 }
 

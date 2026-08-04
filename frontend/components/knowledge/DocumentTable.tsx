@@ -228,7 +228,8 @@ export function DocumentTable({
                   {stats ? formatInt(stats.charCount) : "—"}
                 </td>
                 <td className="whitespace-nowrap px-3 py-2 text-right align-top font-mono tabular-nums text-fg-subtle">
-                  {formatDate(doc.crawledAt)}
+                  {/* API không trả ngày crawl — hiện gạch ngang thay vì ô trống. */}
+                  {doc.crawledAt ? formatDate(doc.crawledAt) : "—"}
                 </td>
                 <td className="px-3 py-2 align-top">
                   <a

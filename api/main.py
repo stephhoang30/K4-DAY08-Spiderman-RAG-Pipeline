@@ -11,6 +11,7 @@ mock và tự khai báo `wiring="mock"`. Gọi GET /api/health để xem tầng 
 Xem api/README.md để biết cách cắm task của bạn vào.
 """
 
+import json
 import time
 from collections import Counter
 from functools import lru_cache
@@ -24,6 +25,10 @@ from .schemas import (
     ChatRequest,
     ChatResponse,
     DocumentSummary,
+    EvalConfigScores,
+    EvaluationResponse,
+    EvalWorstCase,
+    GoldenCase,
     HealthResponse,
     KnowledgeStats,
     RetrieveRequest,
@@ -33,6 +38,7 @@ from .schemas import (
 
 PROJECT_ROOT = Path(__file__).parent.parent
 STANDARDIZED = PROJECT_ROOT / "data" / "standardized"
+EVAL_DIR = PROJECT_ROOT / "group_project" / "evaluation"
 
 app = FastAPI(
     title="RAG Pipeline API — E-commerce Support",
@@ -223,13 +229,21 @@ def retrieve(req: RetrieveRequest) -> RetrieveResponse:
 
     decision = pl.decide_fallback(dense.hits, merged.hits, req.score_threshold)
     stages = [dense, sparse, merged, reranked]
-    results = reranked.hits[: req.top_k]
 
-    if decision.triggered:
-        fb = pl.run_fallback(req.query, req.top_k)
-        stages.append(fb)
-        if fb.hits:
-            results = fb.hits[: req.top_k]
+    # Task 9 là bài nộp được chấm — khi nó đã implement thì kết quả cuối lấy từ nó,
+    # không phải từ chuỗi tầng mà api/ tự ghép. Chuỗi tầng ở trên vẫn chạy để
+    # frontend có chi tiết vẽ trace, thứ mà retrieve() không trả về.
+    task9 = pl.run_task9(req.query, req.top_k, req.score_threshold, req.use_reranking)
+    if task9 is not None and task9.wiring == "live" and task9.hits:
+        stages.append(task9)
+        results = task9.hits[: req.top_k]
+    else:
+        results = reranked.hits[: req.top_k]
+        if decision.triggered:
+            fb = pl.run_fallback(req.query, req.top_k)
+            stages.append(fb)
+            if fb.hits:
+                results = fb.hits[: req.top_k]
 
     return RetrieveResponse(
         query=req.query, stages=stages, fallback=decision, results=results,
@@ -280,4 +294,100 @@ def chat(req: ChatRequest) -> ChatResponse:
         retrieval_source="pageindex" if r.fallback.triggered else "hybrid",
         stages=r.stages, wiring="mock",
         total_ms=round((time.perf_counter() - t0) * 1000, 1),
+    )
+
+
+# ---------------------------------------------------------------------------
+# Evaluation
+# ---------------------------------------------------------------------------
+
+_METRIC_KEYS = ("faithfulness", "answer_relevancy", "context_recall", "context_precision")
+
+
+def _avg(d: dict) -> float | None:
+    vals = [d.get(k) for k in _METRIC_KEYS]
+    nums = [v for v in vals if isinstance(v, (int, float))]
+    return round(sum(nums) / len(nums), 4) if nums else None
+
+
+def _read_golden() -> list[GoldenCase]:
+    path = EVAL_DIR / "golden_dataset.json"
+    if not path.exists():
+        return []
+    try:
+        raw = json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return []
+    return [
+        GoldenCase(
+            question=item.get("question", ""),
+            expected_answer=item.get("expected_answer", ""),
+            expected_context=item.get("expected_context"),
+        )
+        for item in raw
+    ]
+
+
+@app.get("/api/evaluation", response_model=EvaluationResponse)
+def evaluation() -> EvaluationResponse:
+    """
+    Kết quả evaluation đã chạy trước đó.
+
+    KHÔNG tự chạy RAGAS ở đây: một lượt gọi LLM rất nhiều lần (nhiều lần mỗi
+    metric mỗi câu hỏi), mất vài phút và dễ chạm rate limit — không hợp để nằm sau
+    một request HTTP. Chạy offline bằng:
+
+        python -m group_project.evaluation.eval_pipeline
+
+    Lệnh đó ghi results.md (cho người đọc) và results.json (cho endpoint này).
+    """
+    golden = _read_golden()
+    md_path = EVAL_DIR / "results.md"
+    json_path = EVAL_DIR / "results.json"
+
+    results_md = md_path.read_text(encoding="utf-8") if md_path.exists() else None
+
+    if not json_path.exists():
+        # Nói rõ vì sao chưa có, thay vì trả rỗng để frontend tự đoán.
+        gen = pl._load("src.task10_generation", "generate_with_citation")
+        if not pl._is_implemented(gen):
+            reason = (
+                "Chưa chạy được: eval_pipeline gọi generate_with_citation() của Task 10, "
+                "hàm này còn raise NotImplementedError."
+            )
+        else:
+            reason = (
+                "Chưa có results.json. Chạy: "
+                "python -m group_project.evaluation.eval_pipeline"
+            )
+        return EvaluationResponse(
+            has_results=False, blocked_reason=reason,
+            golden_total=len(golden), golden_cases=golden, results_md=results_md,
+        )
+
+    data = json.loads(json_path.read_text(encoding="utf-8"))
+    configs = [
+        EvalConfigScores(config=name, average=_avg(payload.get("scores", {})),
+                         **{k: payload.get("scores", {}).get(k) for k in _METRIC_KEYS})
+        for name, payload in data.get("configs", {}).items()
+    ]
+    worst = []
+    for case in data.get("worst_cases", []):
+        scores = {k: case.get(k) for k in _METRIC_KEYS}
+        nums = {k: v for k, v in scores.items() if isinstance(v, (int, float))}
+        worst.append(EvalWorstCase(
+            question=str(case.get("question", "")),
+            weakest_metric=min(nums, key=nums.get) if nums else None, **scores,
+        ))
+
+    return EvaluationResponse(
+        has_results=True,
+        framework=data.get("framework", "ragas"),
+        golden_total=data.get("golden_total", len(golden)),
+        golden_cases=golden,
+        configs=configs,
+        baseline_config=next(iter(data.get("configs", {})), None),
+        worst_cases=worst,
+        recommendations=data.get("recommendations", []),
+        results_md=results_md,
     )

@@ -1,7 +1,7 @@
 "use client";
 
 import type { RetrievalRun } from "@/lib/types";
-import { getChunk } from "@/lib/mock";
+import { resolveChunk as getChunk } from "@/lib/chunkRegistry";
 import { chunkKeyOf, type ChunkKey } from "./chunkKeys";
 
 const WIDTH = 700;

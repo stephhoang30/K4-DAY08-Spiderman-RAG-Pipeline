@@ -144,6 +144,58 @@ class ChatResponse(BaseModel):
 # Tình trạng đấu nối
 # ---------------------------------------------------------------------------
 
+class GoldenCase(BaseModel):
+    """Một cặp Q&A trong golden dataset."""
+
+    question: str
+    expected_answer: str
+    expected_context: Optional[str] = None
+
+
+class EvalConfigScores(BaseModel):
+    """Điểm 4 chỉ số RAGAS của một cấu hình."""
+
+    config: str
+    faithfulness: Optional[float] = None
+    answer_relevancy: Optional[float] = None
+    context_recall: Optional[float] = None
+    context_precision: Optional[float] = None
+    average: Optional[float] = None
+
+
+class EvalWorstCase(BaseModel):
+    question: str
+    faithfulness: Optional[float] = None
+    answer_relevancy: Optional[float] = None
+    context_recall: Optional[float] = None
+    context_precision: Optional[float] = None
+    weakest_metric: Optional[str] = None
+
+
+class EvaluationResponse(BaseModel):
+    """
+    Kết quả evaluation.
+
+    `has_results=False` nghĩa là chưa ai chạy `python -m group_project.evaluation.eval_pipeline`.
+    Endpoint này KHÔNG tự chạy RAGAS: một lần chạy gọi LLM rất nhiều lần, mất vài phút
+    và dễ chạm rate limit — không hợp để nằm sau một request HTTP.
+    """
+
+    has_results: bool
+    framework: Optional[str] = None
+    blocked_reason: Optional[str] = Field(
+        None, description="Vì sao chưa chạy được, nếu has_results=False"
+    )
+    golden_total: int = 0
+    golden_required: int = 15
+    golden_cases: list[GoldenCase] = []
+    configs: list[EvalConfigScores] = []
+    baseline_config: Optional[str] = None
+    worst_cases: list[EvalWorstCase] = []
+    recommendations: list[str] = []
+    results_md: Optional[str] = None
+
+
 class StageWiring(BaseModel):
     key: str
     task: str

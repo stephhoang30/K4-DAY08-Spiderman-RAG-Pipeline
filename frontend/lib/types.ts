@@ -1,10 +1,30 @@
 /**
  * Kiểu dữ liệu dùng chung cho toàn bộ demo RAG Pipeline.
- * Tất cả dữ liệu đều là mock (lib/mock/*) — app không gọi API thật.
+ *
+ * Dữ liệu tới từ hai nguồn: backend thật (`lib/api.ts`, khớp `api/schemas.py`)
+ * và mock dự phòng (`lib/mock/*`) dùng khi backend chưa chạy. Chỗ duy nhất
+ * quyết định lấy nguồn nào là `lib/data.ts`.
  */
 
 export type DocType = "legal" | "news";
 export type CustomerRole = "buyer" | "seller" | "both";
+
+/**
+ * Tình trạng đấu nối của MỘT tầng pipeline, lấy thẳng từ `StageResult.wiring`
+ * của backend: "live" = chạy code thật, "mock" = task chưa implement.
+ *
+ * Để optional vì dữ liệu mock trong `lib/mock/*` không có trường này — thiếu
+ * thì UI hiểu là dữ liệu demo.
+ */
+export type Wiring = "live" | "mock";
+
+/**
+ * Nguồn của cả một khối dữ liệu (một trang, một lượt chạy).
+ * Cùng tập giá trị với `Wiring` nhưng khác cấp: `Wiring` nói về một tầng
+ * pipeline, `DataSource` nói về toàn bộ dữ liệu đang hiển thị.
+ * Định nghĩa ở đây thay vì ở `lib/data.ts` để tránh vòng import.
+ */
+export type DataSource = "live" | "mock";
 
 /** Một tài liệu nguồn trong knowledge base. */
 export interface KnowledgeDoc {
@@ -201,6 +221,10 @@ export interface PipelineStep {
   durationMs: number;
   status: PipelineStepStatus;
   detail: StepDetail;
+  /** "live" khi bước này chạy code thật trong `src/`. Thiếu = dữ liệu demo. */
+  wiring?: Wiring;
+  /** Ghi chú của backend: hàm nào đã chạy, vì sao rơi về mock. */
+  note?: string;
 }
 
 /** Nguồn tham khảo hiển thị dưới câu trả lời. */
@@ -233,6 +257,12 @@ export interface ChatMessage {
   /** Số bước đã lộ ra trong lúc streaming (undefined = hiện tất cả). */
   revealedSteps?: number;
   usedFallback?: boolean;
+  /** Câu trả lời này lấy từ backend thật hay từ mock. */
+  source?: DataSource;
+  /** Vì sao phải rơi về mock (chỉ có khi `source === "mock"`). */
+  sourceError?: string;
+  /** Dòng trạng thái trong lúc chờ backend (lần đầu có thể mất 20–30s). */
+  loadingNote?: string;
 }
 
 export interface Conversation {
@@ -289,6 +319,10 @@ export interface RetrievalStage {
   items: RetrievalStageItem[];
   /** Một câu giải thích ý nghĩa thang điểm của tầng. */
   caption: string;
+  /** "live" khi tầng này chạy code thật trong `src/`. Thiếu = dữ liệu demo. */
+  wiring?: Wiring;
+  /** Ghi chú của backend: hàm nào đã chạy, vì sao rơi về mock. */
+  note?: string;
 }
 
 /** Toàn bộ dữ liệu một lần chạy thử ở trang Truy xuất. */

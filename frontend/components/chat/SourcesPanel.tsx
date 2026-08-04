@@ -6,7 +6,7 @@ import type { SourceCitation } from "@/lib/types";
 import { Collapsible } from "@/components/ui/Collapsible";
 import { DocTypeBadge } from "@/components/ui/Badge";
 import { ScoreBar, scoreTone } from "@/components/ui/ScoreBar";
-import { getChunk, getDocument } from "@/lib/mock";
+import { resolveChunk, resolveDocument } from "@/lib/chunkRegistry";
 import { formatScore } from "@/lib/utils";
 
 function SourceItem({
@@ -17,8 +17,8 @@ function SourceItem({
   index: number;
 }) {
   const [expanded, setExpanded] = useState(false);
-  const chunk = getChunk(source.chunkId);
-  const doc = chunk ? getDocument(chunk.docId) : undefined;
+  const chunk = resolveChunk(source.chunkId);
+  const doc = chunk ? resolveDocument(chunk.docId) : undefined;
   if (!chunk || !doc) return null;
 
   return (
@@ -58,16 +58,23 @@ function SourceItem({
                   Trích dẫn:{" "}
                   <span className="text-fg-muted">[{doc.citation}]</span>
                 </span>
-                <span className="font-mono">{chunk.tokens} tokens</span>
-                <a
-                  href={doc.url}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  className="inline-flex items-center gap-1 text-accent hover:underline"
-                >
-                  Trang gốc
-                  <ExternalLink className="size-3" aria-hidden />
-                </a>
+                {/* Chunk thật từ API không kèm số token — ẩn đi thay vì hiện "0". */}
+                {chunk.tokens > 0 ? (
+                  <span className="font-mono">{chunk.tokens} tokens</span>
+                ) : (
+                  <span className="font-mono">{chunk.content.length} ký tự</span>
+                )}
+                {doc.url ? (
+                  <a
+                    href={doc.url}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="inline-flex items-center gap-1 text-accent hover:underline"
+                  >
+                    Trang gốc
+                    <ExternalLink className="size-3" aria-hidden />
+                  </a>
+                ) : null}
               </div>
             </div>
           ) : null}

@@ -2,6 +2,7 @@
 
 import type { PipelineStep } from "@/lib/types";
 import { STATUS_CLASS, STATUS_LABEL, STEP_ICON } from "@/components/chat/stepMeta";
+import { WiringBadge } from "@/components/ui/DataSource";
 import { cn, formatMs } from "@/lib/utils";
 
 /**
@@ -63,13 +64,16 @@ export function LatencyTable({
                     </span>
                   </td>
                   <td className="px-2 py-2">
-                    <span
-                      className={cn(
-                        "inline-flex items-center rounded-md border px-1.5 py-0.5 text-[10px] font-medium whitespace-nowrap",
-                        STATUS_CLASS[step.status],
-                      )}
-                    >
-                      {STATUS_LABEL[step.status]}
+                    <span className="flex flex-wrap items-center gap-1">
+                      <span
+                        className={cn(
+                          "inline-flex items-center rounded-md border px-1.5 py-0.5 text-[10px] font-medium whitespace-nowrap",
+                          STATUS_CLASS[step.status],
+                        )}
+                      >
+                        {STATUS_LABEL[step.status]}
+                      </span>
+                      <WiringBadge wiring={step.wiring} note={step.note} />
                     </span>
                   </td>
                   <td className="px-2 py-2 text-right font-mono text-[11px] font-semibold tabular-nums text-fg">

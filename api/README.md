@@ -54,6 +54,28 @@ Hàm trả `list[dict]` với key `content`, `score`, `metadata` đúng như doc
 | GET | `/api/knowledge/chunks?source=<file>` | Các chunk của một tài liệu |
 | POST | `/api/retrieve` | Chi tiết 4 tầng truy xuất + quyết định fallback |
 | POST | `/api/chat` | Hỏi đáp end-to-end |
+| GET | `/api/evaluation` | Kết quả RAGAS đã chạy trước đó + golden dataset |
+
+## Evaluation
+
+`GET /api/evaluation` **không tự chạy RAGAS**. Một lượt eval gọi LLM rất nhiều lần (nhiều lần cho mỗi metric, mỗi câu hỏi), mất vài phút và dễ chạm rate limit — không hợp để nằm sau một request HTTP.
+
+Chạy offline:
+
+```bash
+.venv/bin/python -m group_project.evaluation.eval_pipeline
+```
+
+Lệnh đó ghi hai file cạnh nhau:
+
+| File | Cho ai |
+|---|---|
+| `results.md` | Người đọc, và là bài nộp |
+| `results.json` | Endpoint này đọc để trả cho frontend |
+
+Chưa chạy lần nào thì endpoint trả `has_results: false` kèm `blocked_reason` nói rõ vướng ở đâu, thay vì trả rỗng để frontend tự đoán. Hiện tại lý do là `generate_with_citation()` của Task 10 còn stub — `eval_pipeline` gọi hàm đó nên chưa chạy được.
+
+Endpoint luôn trả `golden_cases` kể cả khi chưa có kết quả, kèm `golden_total` và `golden_required` (15 theo rubric) để frontend hiển thị được tiến độ.
 
 ## Ba loại điểm phải giữ tách riêng
 

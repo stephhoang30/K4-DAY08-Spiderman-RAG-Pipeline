@@ -1,17 +1,82 @@
 [
   {
     "question": "Người mua có thể yêu cầu trả hàng/hoàn tiền trong thời hạn bao lâu sau khi nhận hàng?",
-    "expected_answer": "Trong vòng 15 ngày kể từ khi giao hàng thành công (24 giờ đối với thực phẩm tươi sống/đông lạnh).",
-    "expected_context": "Trang Returns and Refunds Policy, mục Return/Refund Eligibility"
+    "expected_answer": "Trong vòng 15 (mười lăm) ngày kể từ lúc đơn hàng được cập nhật giao hàng thành công. Riêng thực phẩm tươi sống và đông lạnh thì thời hạn là 24 giờ kể từ lúc đơn hàng được cập nhật giao hàng thành công.",
+    "expected_context": "chinh-sach-tra-hang-hoan-tien-shopee.pdf — Điều 3.2, Điều kiện áp dụng"
   },
   {
     "question": "Shopee hỗ trợ những phương thức thanh toán nào?",
-    "expected_answer": "ShopeePay Wallet, thẻ tín dụng/ghi nợ, trả góp qua thẻ, QR Code, chuyển khoản qua app ngân hàng, thẻ NAPAS, Apple Pay, Google Pay, và COD.",
-    "expected_context": "Trang Payment Methods Overview"
+    "expected_answer": "Shopee Việt Nam hỗ trợ 09 hình thức thanh toán: Ví ShopeePay, Thẻ Tín dụng/Ghi nợ, Trả góp bằng Thẻ tín dụng, Thanh toán QR, Ứng dụng ngân hàng, Thẻ nội địa NAPAS, Apple Pay, Google Pay, và Thanh toán khi nhận hàng (COD).",
+    "expected_context": "article_01_phuong-thuc-thanh-toan.json — danh sách 09 hình thức thanh toán"
   },
   {
-    "question": "Người bán không được đăng bán những sản phẩm nào?",
-    "expected_answer": "Hàng giả/nhái, sản phẩm bất hợp pháp, vi phạm sở hữu trí tuệ, và các mặt hàng nằm trong danh sách cấm của sàn.",
-    "expected_context": "Trang Product Listing Regulations, mục Prohibited Content"
+    "question": "Hình thức trả góp bằng thẻ tín dụng có áp dụng cho đơn hàng quốc tế không?",
+    "expected_answer": "Không. Phương thức Trả góp bằng Thẻ tín dụng không áp dụng cho đơn hàng Quốc tế.",
+    "expected_context": "article_01_phuong-thuc-thanh-toan.json — mục 3, Trả góp bằng Thẻ tín dụng"
+  },
+  {
+    "question": "Thanh toán bằng mã QR trên Shopee thực hiện theo các bước nào?",
+    "expected_answer": "Bước 1: tại trang Thanh toán chọn phương thức Thanh toán QR rồi Đặt hàng. Bước 2: chọn Lưu mã QR hiển thị trên màn hình. Bước 3: mở Ứng dụng Ngân hàng di động hoặc Ví điện tử và chọn chức năng Quét ảnh QR. Bước 4: chọn ảnh mã QR đã lưu để hoàn tất thanh toán.",
+    "expected_context": "article_02_thanh-toan-qr.json — hướng dẫn từng bước"
+  },
+  {
+    "question": "Yêu cầu trả hàng/hoàn tiền thường được xử lý trong bao lâu?",
+    "expected_answer": "Yêu cầu thường được xử lý trong khoảng 3 - 5 ngày làm việc. Shopee thông báo kết quả qua mục Thông báo > Cập nhật đơn hàng và/hoặc email.",
+    "expected_context": "article_05_gui-yeu-cau-tra-hang-hoan-tien.json — bảng Lưu ý, dòng Thời gian xử lý"
+  },
+  {
+    "question": "Sau khi yêu cầu hoàn tiền được chấp nhận thì bao lâu nhận được tiền?",
+    "expected_answer": "Tiền sẽ được hoàn trong 1 - 14 ngày làm việc, tùy thuộc vào phương thức thanh toán đã dùng.",
+    "expected_context": "article_05_gui-yeu-cau-tra-hang-hoan-tien.json — bảng Lưu ý, dòng Thời gian hoàn tiền"
+  },
+  {
+    "question": "Cần chuẩn bị bằng chứng gì khi yêu cầu trả hàng/hoàn tiền?",
+    "expected_answer": "Cần cung cấp đầy đủ và chính xác bằng chứng để yêu cầu được xử lý nhanh chóng. Loại bằng chứng cần chuẩn bị khác nhau tùy từng trường hợp, ví dụ hàng lỗi hoặc hư hỏng, thiếu hàng, hàng giả hoặc không đúng mô tả.",
+    "expected_context": "article_04_bang-chung-tra-hang-hoan-tien.json — hướng dẫn chuẩn bị bằng chứng"
+  },
+  {
+    "question": "Sản phẩm hạn chế trả hàng là gì và gồm những nhóm nào?",
+    "expected_answer": "Là những sản phẩm có tính đặc thù cao, dễ hư hỏng hoặc cần điều kiện bảo quản nghiêm ngặt; với nhóm này Shopee không áp dụng lý do trả hàng 'Hàng nguyên vẹn nhưng không còn nhu cầu'. Gồm cây cảnh; nhóm sữa - trứng, thực phẩm tươi sống và đông lạnh, đồ ăn chế biến sẵn, các loại bánh; và găng tay, khẩu trang y tế.",
+    "expected_context": "article_07_san-pham-han-che-tra-hang.json — bảng danh mục sản phẩm hạn chế trả hàng"
+  },
+  {
+    "question": "Người bán không được đăng bán những sản phẩm nào trên Shopee?",
+    "expected_answer": "Không được đăng bán con người và/hoặc bộ phận cơ thể người; động vật và chế phẩm từ động vật kể cả động vật hoang dã như ngà voi, sừng tê giác, cao hổ, da và lông động vật; và các sản phẩm mang tính phân biệt chủng tộc hoặc xúc phạm dân tộc, quốc gia.",
+    "expected_context": "quy-dinh-dang-ban-san-pham-shopee.pdf — danh mục sản phẩm cấm đăng bán"
+  },
+  {
+    "question": "Quy định về hình ảnh sản phẩm khi đăng bán là gì?",
+    "expected_answer": "Sản phẩm thật phải chiếm ít nhất 40% diện tích toàn ảnh. Ngôn ngữ trên phông nền hình ảnh phải là tiếng Việt, không dùng ngôn ngữ nước ngoài. Hình ảnh không chứa yếu tố ghê rợn gây khó chịu cho người xem, và tuyệt đối không đăng hình khỏa thân, khiêu gợi, phản cảm.",
+    "expected_context": "quy-dinh-dang-ban-san-pham-shopee.pdf — quy định về hình ảnh sản phẩm"
+  },
+  {
+    "question": "Ai chịu chi phí vận chuyển khi hoàn trả sản phẩm mua tại Shopee Mall?",
+    "expected_answer": "Với sản phẩm mua tại Shopee Mall, nếu người mua chọn hình thức 'Lấy hàng hoàn trả tại nhà' hoặc 'Gửi hàng tại bưu cục' thì không phải thanh toán bất cứ chi phí vận chuyển nào cho việc trả hàng.",
+    "expected_context": "chinh-sach-tra-hang-hoan-tien-shopee.pdf — Điều 8, Trách nhiệm về chi phí hoàn trả sản phẩm"
+  },
+  {
+    "question": "Sản phẩm hoàn trả cần được đóng gói và gửi kèm những gì?",
+    "expected_answer": "Người mua phải đóng gói sản phẩm hoàn trả theo quy định về đóng gói hàng hóa trong Chính Sách Vận Chuyển Shopee, và gửi trả kèm toàn bộ phụ kiện đi kèm, hóa đơn thuế GTGT, tem phiếu bảo hành nếu có.",
+    "expected_context": "chinh-sach-tra-hang-hoan-tien-shopee.pdf — Điều 6, Yêu cầu đối với sản phẩm hoàn trả"
+  },
+  {
+    "question": "Thời Gian Shopee Đảm Bảo dùng để làm gì?",
+    "expected_answer": "Thời Gian Shopee Đảm Bảo do Shopee thực hiện theo yêu cầu của người dùng, nhằm hỗ trợ người dùng giải quyết các xung đột, tranh chấp, khiếu nại có thể phát sinh trong quá trình giao dịch trên Sàn Shopee.",
+    "expected_context": "chinh-sach-tra-hang-hoan-tien-shopee.pdf — Điều 2.2"
+  },
+  {
+    "question": "Làm sao để theo dõi tình trạng vận chuyển của đơn hàng?",
+    "expected_answer": "Vào mục Tôi, chọn Chờ lấy hàng hoặc Đang giao trong Đơn mua để xem người bán đã gửi hàng cho đơn vị vận chuyển hay chưa, rồi bấm vào thông tin vận chuyển của đơn hàng để xem hành trình. Hướng dẫn áp dụng cho cả đơn hàng trong nước và đơn hàng quốc tế.",
+    "expected_context": "article_03_theo-doi-van-chuyen-don-hang.json — hướng dẫn theo dõi vận chuyển"
+  },
+  {
+    "question": "Theo dõi hành trình đơn hàng quốc tế đã đặt trên Shopee như thế nào?",
+    "expected_answer": "Có thể kiểm tra trạng thái đơn hàng quốc tế ngay trên ứng dụng Shopee: vào Tôi > Chờ lấy hàng hoặc Đang giao tại mục Đơn mua, rồi bấm vào nội dung thông tin vận chuyển của đơn hàng cần theo dõi.",
+    "expected_context": "article_08_theo-doi-don-hang-quoc-te.json — hướng dẫn theo dõi đơn hàng quốc tế"
+  },
+  {
+    "question": "Khi khiếu nại mất mát hàng hóa thì phải cung cấp bằng chứng trong bao lâu?",
+    "expected_answer": "Trừ trường hợp Shopee có yêu cầu khác trong từng vụ việc cụ thể, người khiếu nại phải cung cấp bằng chứng trong vòng 24 giờ. Vận đơn hoặc hóa đơn vận chuyển là bằng chứng vững chắc nhất chứng minh người bán đã giao hàng.",
+    "expected_context": "chinh-sach-van-chuyen-shopee.pdf — quy định về khiếu nại và thời hạn cung cấp bằng chứng"
   }
 ]

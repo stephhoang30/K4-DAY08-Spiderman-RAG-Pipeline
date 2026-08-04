@@ -360,6 +360,31 @@ def decide_fallback(dense: list[ChunkHit], merged: list[ChunkHit],
                             top_cosine=round(top_cos, 4), top_rrf=top_rrf, reason=reason)
 
 
+def run_task9(query: str, top_k: int, threshold: float, use_reranking: bool) -> Optional[StageResult]:
+    """
+    Gọi pipeline hoàn chỉnh của Task 9.
+
+    Task 9 mới là bài nộp được chấm, nên khi nó đã implement thì kết quả CUỐI CÙNG
+    phải lấy từ đây, không phải từ chuỗi tầng mà api/ tự ghép. Chuỗi tầng vẫn chạy
+    song song vì Task 9 chỉ trả danh sách cuối, không trả chi tiết từng bước —
+    mà frontend cần chi tiết đó để vẽ trace.
+
+    Trả None nếu Task 9 chưa implement, để chỗ gọi tự lo phần dự phòng.
+    """
+    fn = _load("src.task9_retrieval_pipeline", "retrieve")
+    rows, ms, err = _call_or_mock(fn, query, top_k, threshold, use_reranking)
+    if err is not None:
+        return StageResult(key="rerank", label="Pipeline Task 9", wiring="mock",
+                           duration_ms=ms, hits=[], note=f"Task 9 {err}")
+
+    hits = _hits_from_task(rows or [], "rerank")
+    # retrieve() gắn item["source"] = "hybrid" | "pageindex"
+    via = (rows or [{}])[0].get("source", "hybrid") if rows else "none"
+    return StageResult(key="rerank", label="Pipeline Task 9", wiring="live",
+                       duration_ms=ms, hits=hits,
+                       note=f"src.task9_retrieval_pipeline.retrieve() · nguồn: {via}")
+
+
 def run_fallback(query: str, top_k: int) -> StageResult:
     fn = _load("src.task8_pageindex_vectorless", "pageindex_search")
     if not _is_implemented(fn):

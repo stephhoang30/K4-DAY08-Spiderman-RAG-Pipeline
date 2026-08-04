@@ -1,17 +1,14 @@
 "use client";
 
 import { Layers, Link2, MessageSquareQuote } from "lucide-react";
-import type { Chunk, KbChunk, KnowledgeDoc } from "@/lib/types";
+import type { Chunk, DocFileStats, KbChunk, KnowledgeDoc } from "@/lib/types";
+import type { KnowledgeSnapshot } from "@/lib/data";
 import { Card, CardHeader } from "@/components/ui/Card";
 import { Badge, DocTypeBadge } from "@/components/ui/Badge";
 import { Collapsible } from "@/components/ui/Collapsible";
+import { Skeleton } from "@/components/ui/DataSource";
 import { ChunkExcerpt, ChunkLabel } from "@/components/ui/ChunkLabel";
-import {
-  PIPELINE_CONFIG,
-  getCitedChunks,
-  getDocFileStats,
-  getKbChunks,
-} from "@/lib/mock";
+import { getCitedChunks } from "@/lib/mock";
 import { RoleBadge, formatInt, topicLabel } from "./labels";
 
 /**
@@ -73,7 +70,13 @@ function OverlapNote({ chunk }: { chunk: KbChunk }) {
   );
 }
 
-function ChunkRow({ chunk, docChunkTotal }: { chunk: KbChunk; docChunkTotal: number }) {
+function ChunkRow({
+  chunk,
+  docChunkTotal,
+}: {
+  chunk: KbChunk;
+  docChunkTotal: number;
+}) {
   const end = chunk.charStart + chunk.charCount;
   return (
     <li className="rounded-xl border border-border bg-surface">
@@ -90,7 +93,9 @@ function ChunkRow({ chunk, docChunkTotal }: { chunk: KbChunk; docChunkTotal: num
                 {chunk.section}
               </span>
               <span className="shrink-0 font-mono text-[11px] tabular-nums text-fg-subtle">
-                {chunk.tokens} token · {chunk.charCount} ký tự
+                {/* API không trả token theo từng chunk — chỉ hiện khi có thật. */}
+                {chunk.tokens > 0 ? `${chunk.tokens} token · ` : ""}
+                {chunk.charCount} ký tự
               </span>
             </span>
             {open ? null : (
@@ -152,7 +157,7 @@ function CitedChunks({ chunks }: { chunks: Chunk[] }) {
   );
 }
 
-function Legend() {
+function Legend({ chunkOverlap }: { chunkOverlap: number }) {
   return (
     <ul className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[11px] text-fg-muted">
       <li className="flex items-center gap-1.5">
@@ -160,14 +165,14 @@ function Legend() {
           aria-hidden
           className="inline-block size-3 rounded-[3px] border border-warn/30 bg-warn-soft"
         />
-        {PIPELINE_CONFIG.chunkOverlap} ký tự lặp từ chunk liền trước
+        phần lặp lại từ chunk liền trước
       </li>
       <li className="flex items-center gap-1.5">
         <span
           aria-hidden
           className="inline-block size-3 rounded-[3px] border border-accent/30 bg-accent-soft"
         />
-        {PIPELINE_CONFIG.chunkOverlap} ký tự sẽ lặp sang chunk liền sau
+        phần sẽ lặp sang chunk liền sau (tối đa {chunkOverlap} ký tự)
       </li>
     </ul>
   );
@@ -177,10 +182,19 @@ export function ChunkBrowser({
   doc,
   docs,
   onSelect,
+  chunks,
+  stats,
+  config,
+  loading = false,
 }: {
   doc: KnowledgeDoc | null;
   docs: KnowledgeDoc[];
   onSelect: (docId: string) => void;
+  /** Chunk của `doc`, do lớp dữ liệu nạp (API thật hoặc mock). */
+  chunks: KbChunk[];
+  stats: DocFileStats | undefined;
+  config: KnowledgeSnapshot["config"];
+  loading?: boolean;
 }) {
   if (!doc) {
     return (
@@ -196,8 +210,7 @@ export function ChunkBrowser({
     );
   }
 
-  const chunks = getKbChunks(doc.id);
-  const stats = getDocFileStats(doc.id);
+  // Chỉ có ở bộ mock: các đoạn được trích dẫn sẵn ở trang Chat.
   const cited = getCitedChunks(doc.id);
 
   return (
@@ -206,8 +219,8 @@ export function ChunkBrowser({
         title="Trình duyệt chunk"
         description={`Nội dung cắt thật từ ${
           stats?.standardizedFile ?? doc.fileName
-        } theo cửa sổ ${PIPELINE_CONFIG.chunkSize} ký tự, chồng lấn ${
-          PIPELINE_CONFIG.chunkOverlap
+        } theo cửa sổ ${config.chunkSize} ký tự, chồng lấn tối đa ${
+          config.chunkOverlap
         }.`}
         action={
           <label className="flex min-w-0 items-center gap-1.5">
@@ -252,12 +265,23 @@ export function ChunkBrowser({
                 {stats?.standardizedFile ?? doc.fileName}
               </dd>
             </div>
-            <div className="flex items-baseline gap-1">
-              <dt>Thân tài liệu</dt>
-              <dd className="font-mono tabular-nums text-fg-muted">
-                {formatInt(stats?.bodyCharCount ?? 0)} ký tự
-              </dd>
-            </div>
+            {/* bodyCharCount = 0 nghĩa là API không tách phần thân — bỏ hẳn dòng
+                này thay vì hiện "0 ký tự". */}
+            {stats?.bodyCharCount ? (
+              <div className="flex items-baseline gap-1">
+                <dt>Thân tài liệu</dt>
+                <dd className="font-mono tabular-nums text-fg-muted">
+                  {formatInt(stats.bodyCharCount)} ký tự
+                </dd>
+              </div>
+            ) : stats?.charCount ? (
+              <div className="flex items-baseline gap-1">
+                <dt>Kích thước</dt>
+                <dd className="font-mono tabular-nums text-fg-muted">
+                  {formatInt(stats.charCount)} ký tự
+                </dd>
+              </div>
+            ) : null}
             <div className="flex items-baseline gap-1">
               <dt>Trích dẫn</dt>
               <dd className="text-fg-muted">[{doc.citation}]</dd>
@@ -266,20 +290,26 @@ export function ChunkBrowser({
         </div>
 
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <Legend />
+          <Legend chunkOverlap={config.chunkOverlap} />
           <p className="text-[11px] text-fg-subtle">
             Đang xem{" "}
             <span className="font-mono font-semibold tabular-nums text-fg">
               {chunks.length}
             </span>{" "}
-            chunk đầu tiên trên tổng{" "}
+            chunk trên tổng{" "}
             <span className="font-mono tabular-nums">
               {formatInt(doc.chunkCount)}
             </span>
           </p>
         </div>
 
-        {chunks.length === 0 ? (
+        {loading ? (
+          <div className="space-y-2">
+            {[0, 1, 2, 3].map((i) => (
+              <Skeleton key={i} className="h-12" />
+            ))}
+          </div>
+        ) : chunks.length === 0 ? (
           <p className="py-8 text-center text-sm text-fg-muted">
             Tài liệu này chưa có chunk mẫu trong bộ dữ liệu demo.
           </p>
