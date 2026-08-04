@@ -43,9 +43,16 @@ PAGEINDEX_DIR = Path(__file__).parent.parent / "data" / "pageindex"
 COMBINED_PDF_PATH = PAGEINDEX_DIR / "ecommerce_support_docs.pdf"
 DOC_REGISTRY_FILE = PAGEINDEX_DIR / "doc_registry.json"
 
+# Font có bảng Unicode đủ rộng để render dấu tiếng Việt. Font mặc định của fpdf2
+# (Helvetica) chỉ hỗ trợ Latin-1 nên sẽ ném FPDFUnicodeEncodingException ngay ký tự
+# có dấu đầu tiên. Danh sách này giống src/task1_collect_legal_docs.py — phủ cả ba
+# hệ điều hành, vì bản cũ chỉ có đường dẫn Linux nên máy macOS luôn rơi vào Helvetica.
 _UNICODE_FONT_CANDIDATES = [
-    "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-    "/usr/share/fonts/truetype/noto/NotoSans-Regular.ttf",
+    "/System/Library/Fonts/Supplemental/Arial Unicode.ttf",  # macOS
+    "/Library/Fonts/Arial Unicode.ttf",                      # macOS (bản cũ)
+    "C:/Windows/Fonts/arial.ttf",                            # Windows
+    "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",       # Linux
+    "/usr/share/fonts/truetype/noto/NotoSans-Regular.ttf",   # Linux
 ]
 
 
@@ -67,8 +74,15 @@ def _build_combined_pdf() -> Path:
         pdf.add_font("Body", "", font_path)
         pdf.set_font("Body", size=11)
     else:
-        print("⚠ Không tìm thấy font Unicode (DejaVu Sans) — chữ tiếng Việt có dấu có thể lỗi.")
-        pdf.set_font("Helvetica", size=11)
+        # Đừng rơi về Helvetica: nó không render được dấu tiếng Việt, fpdf2 sẽ ném
+        # FPDFUnicodeEncodingException ở giữa vòng lặp với thông báo khó truy ngược.
+        # Báo lỗi ngay tại đây, kèm cách sửa.
+        raise FileNotFoundError(
+            "Không tìm thấy font Unicode để xuất PDF tiếng Việt cho PageIndex.\n"
+            "Đã thử:\n  " + "\n  ".join(_UNICODE_FONT_CANDIDATES) + "\n"
+            "Cách sửa: tải DejaVuSans.ttf về máy rồi thêm đường dẫn vào "
+            "_UNICODE_FONT_CANDIDATES."
+        )
 
     for md_file in sorted(STANDARDIZED_DIR.rglob("*.md")):
         text = md_file.read_text(encoding="utf-8")

@@ -18,7 +18,6 @@ BM25 hoạt động thế nào:
 from pathlib import Path
 from .task4_chunking_indexing import load_documents
 
-# TODO: Load corpus từ data/standardized/ hoặc từ vector store
 CORPUS: list[dict] = load_documents()  # List of {'content': str, 'metadata': dict}
 
 
