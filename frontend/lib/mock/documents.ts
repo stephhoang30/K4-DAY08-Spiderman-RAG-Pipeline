@@ -215,7 +215,8 @@ export const PIPELINE_CONFIG = {
   embeddingModel: "BAAI/bge-m3",
   embeddingDim: 1024,
   vectorStore: "ChromaDB",
-  collection: "shopee_policies",
+  // Phải khớp COLLECTION_NAME trong src/task4_chunking_indexing.py
+  collection: "ecommerce_support_docs",
   similarity: "cosine",
   lexicalAlgorithm: "BM25 (rank-bm25)",
   bm25K1: 1.5,
