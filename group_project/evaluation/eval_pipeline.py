@@ -6,6 +6,9 @@ from pathlib import Path
 
 GOLDEN_DATASET_PATH = Path(__file__).parent / "golden_dataset.json"
 RESULTS_PATH = Path(__file__).parent / "results.md"
+# Bản máy đọc được của cùng kết quả, để GET /api/evaluation phục vụ cho frontend.
+# results.md dành cho người đọc và để nộp bài; JSON dành cho API.
+RESULTS_JSON_PATH = Path(__file__).parent / "results.json"
 METRICS = (
     "faithfulness",
     "answer_relevancy",
@@ -160,6 +163,49 @@ def export_results(results: dict, comparison: dict) -> None:
         "",
     ]
     RESULTS_PATH.write_text("\n".join(report), encoding="utf-8")
+    _export_json(results, comparison)
+
+
+def _json_safe(value):
+    """Đổi giá trị numpy/pandas sang kiểu JSON chuẩn."""
+    if isinstance(value, dict):
+        return {str(k): _json_safe(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_json_safe(v) for v in value]
+    if hasattr(value, "item"):          # numpy scalar
+        try:
+            return value.item()
+        except Exception:
+            return str(value)
+    if isinstance(value, (str, int, float, bool)) or value is None:
+        return value
+    return str(value)
+
+
+def _export_json(results: dict, comparison: dict) -> None:
+    """
+    Xuất cùng kết quả ra JSON cho GET /api/evaluation.
+
+    RAGAS trả pandas/numpy nên phải ép về kiểu JSON chuẩn, nếu không json.dump sẽ vỡ.
+    """
+    payload = {
+        "framework": "ragas",
+        "metrics": list(METRICS),
+        "golden_total": len(load_golden_dataset()),
+        "baseline": {
+            "scores": _json_safe(results["scores"]),
+            "cases": _json_safe(results["cases"]),
+        },
+        "configs": {
+            name: {"scores": _json_safe(data["scores"])}
+            for name, data in comparison.items()
+        },
+        "worst_cases": _json_safe(_worst_cases(results["cases"])),
+        "recommendations": _recommendations(results["scores"]),
+    }
+    RESULTS_JSON_PATH.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
 
 
 def main() -> None:
