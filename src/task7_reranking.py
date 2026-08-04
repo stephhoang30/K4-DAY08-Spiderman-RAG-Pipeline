@@ -15,6 +15,25 @@ quyết định fallback ở Task 9 — xem ghi chú ở đó.
 """
 
 from typing import Optional
+from math import sqrt
+
+
+def cosine_sim(vector_a: list[float], vector_b: list[float]) -> float:
+    """Calculate cosine similarity between two vectors."""
+    if len(vector_a) != len(vector_b):
+        raise ValueError("Vectors must have the same dimensions")
+
+    dot_product = 0.0
+    norm_a = 0.0
+    norm_b = 0.0
+    for value_a, value_b in zip(vector_a, vector_b):
+        dot_product += value_a * value_b
+        norm_a += value_a * value_a
+        norm_b += value_b * value_b
+
+    if norm_a == 0.0 or norm_b == 0.0:
+        return 0.0
+    return dot_product / sqrt(norm_a * norm_b)
 
 
 def rerank_cross_encoder(
@@ -77,37 +96,34 @@ def rerank_mmr(
     Returns:
         List of top_k candidates selected by MMR.
     """
-    # TODO: Implement MMR
-    #
-    # selected = []
-    # remaining = list(range(len(candidates)))
-    #
-    # for _ in range(min(top_k, len(candidates))):
-    #     best_idx = None
-    #     best_score = float('-inf')
-    #
-    #     for idx in remaining:
-    #         # Relevance to query
-    #         relevance = cosine_sim(query_embedding, candidates[idx]["embedding"])
-    #
-    #         # Max similarity to already selected
-    #         max_sim_to_selected = 0
-    #         for sel_idx in selected:
-    #             sim = cosine_sim(candidates[idx]["embedding"], candidates[sel_idx]["embedding"])
-    #             max_sim_to_selected = max(max_sim_to_selected, sim)
-    #
-    #         # MMR score
-    #         mmr_score = lambda_param * relevance - (1 - lambda_param) * max_sim_to_selected
-    #
-    #         if mmr_score > best_score:
-    #             best_score = mmr_score
-    #             best_idx = idx
-    #
-    #     selected.append(best_idx)
-    #     remaining.remove(best_idx)
-    #
-    # return [candidates[i] for i in selected]
-    raise NotImplementedError("Implement rerank_mmr")
+    selected = []
+    remaining = list(range(len(candidates)))
+    
+    for _ in range(min(top_k, len(candidates))):
+        best_idx = None
+        best_score = float('-inf')
+    
+        for idx in remaining:
+            # Relevance to query
+            relevance = cosine_sim(query_embedding, candidates[idx]["embedding"])
+    
+            # Max similarity to already selected
+            max_sim_to_selected = 0
+            for sel_idx in selected:
+                sim = cosine_sim(candidates[idx]["embedding"], candidates[sel_idx]["embedding"])
+                max_sim_to_selected = max(max_sim_to_selected, sim)
+    
+            # MMR score
+            mmr_score = lambda_param * relevance - (1 - lambda_param) * max_sim_to_selected
+    
+            if mmr_score > best_score:
+                best_score = mmr_score
+                best_idx = idx
+    
+        selected.append(best_idx)
+        remaining.remove(best_idx)
+    
+    return [candidates[i] for i in selected]
 
 
 def rerank_rrf(
