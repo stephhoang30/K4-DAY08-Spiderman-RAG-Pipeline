@@ -175,6 +175,49 @@ export interface ApiStageWiring {
 }
 
 /** schemas.py::HealthResponse */
+// --- Evaluation (khớp api/schemas.py) -------------------------------------
+
+export interface ApiGoldenCase {
+  question: string;
+  expected_answer: string;
+  expected_context: string | null;
+}
+
+export interface ApiEvalConfigScores {
+  config: string;
+  faithfulness: number | null;
+  answer_relevancy: number | null;
+  context_recall: number | null;
+  context_precision: number | null;
+  average: number | null;
+}
+
+export interface ApiEvalWorstCase {
+  question: string;
+  faithfulness: number | null;
+  answer_relevancy: number | null;
+  context_recall: number | null;
+  context_precision: number | null;
+  weakest_metric: string | null;
+}
+
+export interface ApiEvaluationResponse {
+  has_results: boolean;
+  framework: string | null;
+  /** Vì sao chưa chạy được, chỉ có khi has_results = false. */
+  blocked_reason: string | null;
+  golden_total: number;
+  golden_required: number;
+  golden_cases: ApiGoldenCase[];
+  configs: ApiEvalConfigScores[];
+  baseline_config: string | null;
+  worst_cases: ApiEvalWorstCase[];
+  /** Chỉ 1 mục generic — phân tích đầy đủ nằm trong results_md. */
+  recommendations: string[];
+  /** Báo cáo markdown do group_project/evaluation/report.py dựng. */
+  results_md: string | null;
+}
+
 export interface ApiHealthResponse {
   ok: boolean;
   chroma_ready: boolean;
@@ -339,6 +382,16 @@ export function fetchHealth(): Promise<ApiHealthResponse> {
 
 export function fetchKnowledgeStats(): Promise<ApiKnowledgeStats> {
   return request<ApiKnowledgeStats>("/api/knowledge/stats");
+}
+
+/**
+ * Kết quả evaluation đã chạy trước đó.
+ *
+ * Endpoint này KHÔNG tự chạy RAGAS (một lượt mất vài phút và gọi LLM rất nhiều
+ * lần), nên nó nhanh — dùng timeout ngắn hơn mặc định.
+ */
+export function fetchEvaluation(): Promise<ApiEvaluationResponse> {
+  return request<ApiEvaluationResponse>("/api/evaluation", { timeoutMs: 20_000 });
 }
 
 export function fetchKnowledgeDocuments(): Promise<ApiDocumentSummary[]> {
