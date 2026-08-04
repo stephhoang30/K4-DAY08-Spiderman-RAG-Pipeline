@@ -189,11 +189,10 @@ def rerank(
     if method == "cross_encoder":
         return rerank_cross_encoder(query, candidates, top_k)
     elif method == "mmr":
-        # Cần query_embedding - embed query trước
-        raise NotImplementedError("Call rerank_mmr with query_embedding")
+        return rerank_mmr(query, candidates, top_k)
     elif method == "rrf":
         # RRF cần nhiều ranked lists - gọi riêng
-        raise NotImplementedError("Call rerank_rrf with ranked_lists")
+        return rerank_rrf(query, candidates, top_k)
     else:
         raise ValueError(f"Unknown rerank method: {method}")
 
