@@ -18,6 +18,7 @@ data/_tmp_pdf/
 *.tmp
 pageindex_doc_ids.json
 pageindex_pdfs/
+data/pageindex/
 
 # IDE
 .vscode/
