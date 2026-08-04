@@ -164,6 +164,11 @@ def export_results(results: dict, comparison: dict) -> None:
 
 def main() -> None:
     """Run an A/B evaluation with two retrieval-context sizes."""
+    ROOT_DIR = Path(__file__).parent.parent.parent
+    import sys
+
+    if str(ROOT_DIR) not in sys.path:
+        sys.path.insert(0, str(ROOT_DIR))
     from src.task10_generation import generate_with_citation
 
     golden_dataset = load_golden_dataset()

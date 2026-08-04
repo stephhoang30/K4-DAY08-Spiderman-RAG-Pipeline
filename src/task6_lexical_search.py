@@ -16,7 +16,7 @@ BM25 hoạt động thế nào:
 """
 
 from pathlib import Path
-from .task4_chunking_indexing import chunk_documents, chunks_documents, load_documents
+from .task4_chunking_indexing import chunk_documents, load_documents
 
 CORPUS: list[dict] = chunk_documents(load_documents())  # List of {'content': str, 'metadata': dict}
 
