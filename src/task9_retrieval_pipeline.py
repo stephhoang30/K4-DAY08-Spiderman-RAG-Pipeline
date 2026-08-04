@@ -31,7 +31,13 @@ from .task7_reranking import rerank, rerank_rrf
 from .task8_pageindex_vectorless import pageindex_search
 
 
-SCORE_THRESHOLD = 0.3
+# Hiệu chỉnh bằng đo thật trên corpus hiện tại (206 chunk, bge-m3), không copy mẫu:
+#   Câu đúng chủ đề : 0.6326 – 0.7811
+#   Câu lạc đề/rác  : 0.3745 – 0.4206
+# Với 0.3 thì 0/2 câu lạc đề kích hoạt fallback — nhánh PageIndex thành code chết.
+# Với 0.48 thì 2/2 câu lạc đề kích hoạt và 0/3 câu đúng chủ đề bị fallback nhầm.
+# Khoảng trống giữa hai nhóm là 0.21 nên 0.48 nằm giữa, an toàn.
+SCORE_THRESHOLD = 0.48
 DEFAULT_TOP_K = 5
 RERANK_METHOD = "rrf"
 

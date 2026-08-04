@@ -223,13 +223,21 @@ def retrieve(req: RetrieveRequest) -> RetrieveResponse:
 
     decision = pl.decide_fallback(dense.hits, merged.hits, req.score_threshold)
     stages = [dense, sparse, merged, reranked]
-    results = reranked.hits[: req.top_k]
 
-    if decision.triggered:
-        fb = pl.run_fallback(req.query, req.top_k)
-        stages.append(fb)
-        if fb.hits:
-            results = fb.hits[: req.top_k]
+    # Task 9 là bài nộp được chấm — khi nó đã implement thì kết quả cuối lấy từ nó,
+    # không phải từ chuỗi tầng mà api/ tự ghép. Chuỗi tầng ở trên vẫn chạy để
+    # frontend có chi tiết vẽ trace, thứ mà retrieve() không trả về.
+    task9 = pl.run_task9(req.query, req.top_k, req.score_threshold, req.use_reranking)
+    if task9 is not None and task9.wiring == "live" and task9.hits:
+        stages.append(task9)
+        results = task9.hits[: req.top_k]
+    else:
+        results = reranked.hits[: req.top_k]
+        if decision.triggered:
+            fb = pl.run_fallback(req.query, req.top_k)
+            stages.append(fb)
+            if fb.hits:
+                results = fb.hits[: req.top_k]
 
     return RetrieveResponse(
         query=req.query, stages=stages, fallback=decision, results=results,
