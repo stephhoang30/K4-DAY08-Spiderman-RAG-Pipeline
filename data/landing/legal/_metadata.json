@@ -1,0 +1,47 @@
+[
+  {
+    "filename": "chinh-sach-tra-hang-hoan-tien-shopee.pdf",
+    "title": "CHÍNH SÁCH TRẢ HÀNG VÀ HOÀN TIỀN",
+    "url": "https://help.shopee.vn/portal/4/article/77251",
+    "customer_role": "buyer",
+    "doc_type": "legal",
+    "date_collected": "2026-08-04T06:38:08.072931+00:00",
+    "char_count": 19446
+  },
+  {
+    "filename": "chinh-sach-bao-mat-shopee.pdf",
+    "title": "CHÍNH SÁCH BẢO MẬT",
+    "url": "https://help.shopee.vn/portal/4/article/77244",
+    "customer_role": "both",
+    "doc_type": "legal",
+    "date_collected": "2026-08-04T06:38:08.509719+00:00",
+    "char_count": 42980
+  },
+  {
+    "filename": "quy-dinh-dang-ban-san-pham-shopee.pdf",
+    "title": "QUY ĐỊNH VỀ ĐĂNG BÁN SẢN PHẨM TRÊN SHOPEE",
+    "url": "https://help.shopee.vn/portal/4/article/77246",
+    "customer_role": "seller",
+    "doc_type": "legal",
+    "date_collected": "2026-08-04T06:38:08.777695+00:00",
+    "char_count": 21345
+  },
+  {
+    "filename": "chinh-sach-cam-han-che-san-pham-shopee.pdf",
+    "title": "CHÍNH SÁCH CẤM/HẠN CHẾ SẢN PHẨM",
+    "url": "https://help.shopee.vn/portal/4/article/77247",
+    "customer_role": "seller",
+    "doc_type": "legal",
+    "date_collected": "2026-08-04T06:38:09.003621+00:00",
+    "char_count": 12653
+  },
+  {
+    "filename": "chinh-sach-van-chuyen-shopee.pdf",
+    "title": "CHÍNH SÁCH VẬN CHUYỂN SHOPEE",
+    "url": "https://help.shopee.vn/portal/4/article/77250",
+    "customer_role": "both",
+    "doc_type": "legal",
+    "date_collected": "2026-08-04T06:38:09.292260+00:00",
+    "char_count": 24361
+  }
+]
