@@ -1,23 +1,15 @@
 import { AppShell } from "@/components/AppShell";
 import { Badge } from "@/components/ui/Badge";
-import { DataSourceBadge } from "@/components/ui/DataSource";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { EVALUATION_SOURCE } from "@/lib/data";
 import { Section } from "@/components/evaluation/common";
 import { ConfigComparison } from "@/components/evaluation/ConfigComparison";
+import { EvaluationLive } from "@/components/evaluation/EvaluationLive";
 import { FallbackQueries } from "@/components/evaluation/FallbackQueries";
 import { GoldenDataset } from "@/components/evaluation/GoldenDataset";
 import { MetricOverview } from "@/components/evaluation/MetricOverview";
 import { RunSummary } from "@/components/evaluation/RunSummary";
 import { WorstPerformers } from "@/components/evaluation/WorstPerformers";
-import {
-  EVALUATION_RUN,
-  GOLDEN_PASSED,
-  GOLDEN_TOTAL,
-  PIPELINE_CONFIG,
-  PRIMARY_CONFIG,
-  RETRIEVAL_CONFIGS,
-} from "@/lib/mock";
+import { PIPELINE_CONFIG } from "@/lib/mock";
 
 export const metadata = {
   title: "Đánh giá · VinUniversity RAG Lab",
@@ -30,40 +22,30 @@ export default function EvaluationPage() {
         <PageHeader
           eyebrow="Đánh giá"
           title="Đánh giá pipeline RAG"
-          description={`Bộ ${GOLDEN_TOTAL} cặp Q&A về chính sách Shopee chạy qua ${RETRIEVAL_CONFIGS.length} cấu hình truy xuất, chấm bằng RAGAS với ngưỡng đạt 0.70. Trang này gồm bốn chỉ số tổng quan, bảng so sánh A/B, toàn bộ golden dataset và phân tích ca tệ nhất.`}
+          description="Kết quả chấm bằng RAGAS với ngưỡng đạt 0.70. Khối đầu trang là số đo thật lấy từ backend; các khối bên dưới là bộ số minh hoạ cho những chiều mà API chưa trả."
           actions={
-            <>
-              <DataSourceBadge
-                source={EVALUATION_SOURCE}
-                title="Backend chưa có endpoint đánh giá — toàn bộ số trên trang này lấy từ lib/mock"
-              />
-              <Badge tone="accent" mono>
-                {PRIMARY_CONFIG.label}
-              </Badge>
-              <Badge tone={GOLDEN_PASSED / GOLDEN_TOTAL >= 0.7 ? "ok" : "warn"} mono>
-                {GOLDEN_PASSED}/{GOLDEN_TOTAL} câu đạt
-              </Badge>
-              <Badge tone="neutral" mono>
-                {EVALUATION_RUN.ranAt}
-              </Badge>
-            </>
+            <Badge tone="neutral" mono>
+              RAGAS
+            </Badge>
           }
         />
 
-        {/* Trang duy nhất còn 100% mock. Nói thẳng ngay đầu trang thay vì để
-            người xem tưởng đây cũng là số đo thật như ba trang kia. */}
-        <div className="mt-4 rounded-xl border border-warn/30 bg-warn-soft px-3 py-2.5">
+        {/* Số ĐO THẬT từ GET /api/evaluation. Đặt trên cùng vì đây mới là kết quả
+            chạy trên pipeline thật; các khối bên dưới là bộ số minh hoạ. */}
+        <div className="mt-6">
+          <EvaluationLive />
+        </div>
+
+        <div className="mt-8 rounded-xl border border-warn/30 bg-warn-soft px-3 py-2.5">
           <p className="text-[13px] font-semibold text-warn">
-            Toàn bộ số trên trang này là dữ liệu demo
+            Các khối bên dưới là dữ liệu minh hoạ, không phải số đo
           </p>
           <p className="mt-1 text-[12px] leading-relaxed text-fg-muted">
-            Backend hiện có bốn nhóm endpoint: <code className="font-mono">health</code>,{" "}
-            <code className="font-mono">knowledge</code>,{" "}
-            <code className="font-mono">retrieve</code> và{" "}
-            <code className="font-mono">chat</code> — chưa có endpoint chạy RAGAS.
-            Ba trang Chat, Kho tri thức và Truy xuất đã nối API thật; riêng trang
-            này giữ nguyên bộ số mẫu trong <code className="font-mono">lib/mock</code>{" "}
-            để không bịa kết quả đánh giá.
+            Kết quả thật nằm ở khối phía trên. Phần dưới đây giữ bộ số mẫu trong{" "}
+            <code className="font-mono">lib/mock</code> vì nó minh hoạ những chiều mà{" "}
+            <code className="font-mono">/api/evaluation</code> không trả: biểu đồ bốn
+            cấu hình truy xuất, điểm từng câu trong golden dataset, và danh sách truy
+            vấn kích hoạt PageIndex fallback.
           </p>
         </div>
 

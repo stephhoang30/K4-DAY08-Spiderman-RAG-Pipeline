@@ -14,12 +14,14 @@
 
 import {
   describeError,
+  fetchEvaluation,
   fetchHealth,
   fetchKnowledgeChunks,
   fetchKnowledgeDocuments,
   fetchKnowledgeStats,
   postChat,
   postRetrieve,
+  type ApiEvaluationResponse,
   type ApiHealthResponse,
   type ApiRetrieveRequest,
 } from "@/lib/api";
@@ -68,6 +70,26 @@ const mock = <T,>(data: T, error?: string): Loaded<T> => ({
 /**
  * Trang Đánh giá chưa có endpoint tương ứng ở backend — cố tình giữ nguyên mock
  * thay vì bịa số. Xem `api/README.md`: chỉ có health / knowledge / retrieve / chat.
+ */
+/**
+ * Kết quả evaluation thật từ `GET /api/evaluation`.
+ *
+ * Khác các loader kia ở một chỗ: endpoint có thể trả 200 nhưng `has_results=false`
+ * khi chưa ai chạy `python -m group_project.evaluation.eval_pipeline`. Đó KHÔNG phải
+ * lỗi — trả nguyên payload để trang tự hiển thị `blocked_reason`.
+ */
+export async function loadEvaluation(): Promise<Loaded<ApiEvaluationResponse | null>> {
+  try {
+    return live(await fetchEvaluation());
+  } catch (error) {
+    return mock(null, describeError(error));
+  }
+}
+
+/**
+ * Các khối bên dưới trang Đánh giá (biểu đồ 4 cấu hình, bảng golden có điểm từng
+ * câu, danh sách fallback) vẫn đọc `lib/mock` — API không trả những chiều đó.
+ * Số ĐO THẬT nằm ở khối `EvaluationLive` đầu trang.
  */
 export const EVALUATION_SOURCE: DataSource = "mock";
 
