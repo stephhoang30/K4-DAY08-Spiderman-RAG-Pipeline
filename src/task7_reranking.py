@@ -16,7 +16,15 @@ quyết định fallback ở Task 9 — xem ghi chú ở đó.
 
 from typing import Optional
 from math import sqrt
+import sys
+from pathlib import Path
 
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+JINA_API_KEY = os.getenv("JINA_API_KEY", "")
 
 def cosine_sim(vector_a: list[float], vector_b: list[float]) -> float:
     """Calculate cosine similarity between two vectors."""
@@ -53,27 +61,22 @@ def rerank_cross_encoder(
     # TODO: Implement cross-encoder reranking
     #
     # Option A: Jina Reranker API
-    # import requests
-    # response = requests.post(
-    #     "https://api.jina.ai/v1/rerank",
-    #     headers={"Authorization": f"Bearer {JINA_API_KEY}"},
-    #     json={
-    #         "model": "jina-reranker-v2-base-multilingual",
-    #         "query": query,
-    #         "documents": [c["content"] for c in candidates],
-    #         "top_n": top_k
-    #     }
-    # )
-    # reranked = response.json()["results"]
-    # return [
-    #     {**candidates[r["index"]], "score": r["relevance_score"]}
-    #     for r in reranked
-    # ]
-    #
-    # Option B: Local model (Qwen3-Reranker)
-    # from transformers import AutoModelForSequenceClassification, AutoTokenizer
-    # ...
-    raise NotImplementedError("Implement rerank_cross_encoder")
+    import requests
+    response = requests.post(
+        "https://api.jina.ai/v1/rerank",
+        headers={"Authorization": f"Bearer {JINA_API_KEY}"},
+        json={
+            "model": "jina-reranker-v2-base-multilingual",
+            "query": query,
+            "documents": [c["content"] for c in candidates],
+            "top_n": top_k
+        }
+    )
+    reranked = response.json()["results"]
+    return [
+        {**candidates[r["index"]], "score": r["relevance_score"]}
+        for r in reranked
+    ]
 
 
 def rerank_mmr(
