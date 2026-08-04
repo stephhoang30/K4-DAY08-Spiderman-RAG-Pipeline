@@ -2,15 +2,19 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Sparkles } from "lucide-react";
-import type { ChatMessage, Conversation, MockAnswer } from "@/lib/types";
+import type { ChatMessage, Conversation, DataSource } from "@/lib/types";
 import {
   MOCK_CONVERSATIONS,
-  buildDefaultAnswer,
   createPendingAssistantMessage,
   createUserMessage,
-  matchAnswer,
 } from "@/lib/mock";
+import { checkBackend, runChat, type ChatResult, type Loaded } from "@/lib/data";
+import { API_BASE_URL } from "@/lib/api";
 import { AppShell } from "@/components/AppShell";
+import {
+  BackendOfflineBanner,
+  DataSourceBadge,
+} from "@/components/ui/DataSource";
 import { ConversationList } from "./ConversationList";
 import { MessageItem } from "./MessageItem";
 import { Composer } from "./Composer";
@@ -24,11 +28,6 @@ const DRAFT: Conversation = {
   updatedAt: "",
   messages: [],
 };
-
-/** Nhịp hiển thị mỗi bước: giữ đúng thứ tự thật nhưng đủ chậm để nhìn thấy. */
-function pace(durationMs: number): number {
-  return Math.min(900, Math.max(240, durationMs));
-}
 
 /** Cắt câu trả lời thành ~N mảnh theo ranh giới khoảng trắng để giả lập streaming. */
 function splitIntoPieces(text: string, count: number): string[] {
@@ -51,12 +50,23 @@ export function ChatApp() {
   const [activeId, setActiveId] = useState<string>(DRAFT.id);
   const [busy, setBusy] = useState(false);
 
+  /** Tình trạng backend, dùng cho nhãn ở header và banner ở màn hình chào. */
+  const [health, setHealth] = useState<{
+    source: DataSource;
+    error?: string;
+    chunks?: number;
+    liveStages?: string;
+  } | null>(null);
+
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  /** Câu trả lời đang stream dở — giữ để nút Dừng nhảy thẳng tới kết quả cuối. */
   const inflight = useRef<{
     convId: string;
     msgId: string;
-    answer: MockAnswer;
+    result: Loaded<ChatResult>;
   } | null>(null);
+  /** Tăng mỗi lần gửi, để response tới muộn của lượt cũ không ghi đè lượt mới. */
+  const requestSeq = useRef(0);
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   const active =
@@ -68,6 +78,25 @@ export function ChatApp() {
   }, []);
 
   useEffect(() => clearTimers, [clearTimers]);
+
+  // Hỏi backend một lần lúc mở trang để biết gắn nhãn nào.
+  useEffect(() => {
+    let alive = true;
+    checkBackend().then((res) => {
+      if (!alive) return;
+      setHealth({
+        source: res.source,
+        error: res.error,
+        chunks: res.data?.chunks_indexed,
+        liveStages: res.data
+          ? `${res.data.live_count}/${res.data.total_count} tầng live`
+          : undefined,
+      });
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   const patchMessage = useCallback(
     (convId: string, msgId: string, patch: Partial<ChatMessage>) => {
@@ -94,16 +123,24 @@ export function ChatApp() {
     el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
   }, [active?.messages]);
 
+  /** Bỏ qua phần streaming còn lại, hiện ngay kết quả đầy đủ. */
   const finish = useCallback(() => {
     const job = inflight.current;
-    if (!job) return;
     clearTimers();
+    if (!job) {
+      setBusy(false);
+      return;
+    }
+    const { data, source, error } = job.result;
     patchMessage(job.convId, job.msgId, {
-      content: job.answer.answer,
-      sources: job.answer.sources,
-      steps: job.answer.steps,
-      totalMs: job.answer.totalMs,
-      usedFallback: job.answer.usedFallback,
+      content: data.answer,
+      sources: data.sources,
+      steps: data.steps,
+      totalMs: data.totalMs,
+      usedFallback: data.usedFallback,
+      source,
+      sourceError: error,
+      loadingNote: undefined,
       revealedSteps: undefined,
       streaming: false,
     });
@@ -114,16 +151,13 @@ export function ChatApp() {
   const send = useCallback(
     (text: string) => {
       if (busy) return;
-      const answer = matchAnswer(text) ?? buildDefaultAnswer(text);
+      const convId = activeId;
       const userMsg = createUserMessage(text);
       const assistantMsg: ChatMessage = {
         ...createPendingAssistantMessage(),
-        steps: answer.steps,
-        totalMs: answer.totalMs,
-        usedFallback: answer.usedFallback,
-        revealedSteps: 1,
+        loadingNote:
+          "Đang gọi POST /api/chat — lần gọi đầu sau khi backend khởi động có thể mất 20–30 giây vì phải nạp model BAAI/bge-m3.",
       };
-      const convId = activeId;
 
       setConversations((prev) =>
         prev.map((conv) =>
@@ -140,48 +174,59 @@ export function ChatApp() {
       );
 
       setBusy(true);
-      inflight.current = { convId, msgId: assistantMsg.id, answer };
       clearTimers();
+      const seq = (requestSeq.current += 1);
 
-      // 1) Lộ dần từng bước pipeline
-      let elapsed = 0;
-      answer.steps.forEach((step, i) => {
-        if (i === 0) return;
-        elapsed += pace(answer.steps[i - 1].durationMs);
-        const at = elapsed;
+      // Toàn bộ quyết định live/mock nằm trong runChat() — ở đây chỉ hiển thị.
+      runChat(text).then((result) => {
+        if (seq !== requestSeq.current) return; // lượt này đã bị thay thế
+        inflight.current = { convId, msgId: assistantMsg.id, result };
+
+        const { data, source, error } = result;
+
+        // 1) Lộ dần từng bước pipeline. Số liệu đã có sẵn, stagger chỉ để đọc kịp.
+        patchMessage(convId, assistantMsg.id, {
+          steps: data.steps,
+          totalMs: data.totalMs,
+          usedFallback: data.usedFallback,
+          source,
+          sourceError: error,
+          revealedSteps: 1,
+          loadingNote: undefined,
+        });
+
+        const stepTick = 140;
+        data.steps.forEach((_, i) => {
+          if (i === 0) return;
+          timers.current.push(
+            setTimeout(
+              () => patchMessage(convId, assistantMsg.id, { revealedSteps: i + 1 }),
+              stepTick * i,
+            ),
+          );
+        });
+
+        // 2) Rồi stream dần câu trả lời
+        const streamStart = stepTick * data.steps.length + 120;
+        const pieces = splitIntoPieces(data.answer, 48);
+        const tick = Math.max(12, Math.round(1200 / pieces.length));
+
+        pieces.forEach((_, idx) => {
+          timers.current.push(
+            setTimeout(
+              () =>
+                patchMessage(convId, assistantMsg.id, {
+                  content: pieces.slice(0, idx + 1).join(""),
+                }),
+              streamStart + tick * (idx + 1),
+            ),
+          );
+        });
+
         timers.current.push(
-          setTimeout(
-            () => patchMessage(convId, assistantMsg.id, { revealedSteps: i + 1 }),
-            at,
-          ),
+          setTimeout(() => finish(), streamStart + tick * (pieces.length + 1) + 120),
         );
       });
-
-      // 2) Sau bước cuối (Generation) thì stream dần câu trả lời
-      const genDuration = answer.steps[answer.steps.length - 1]?.durationMs ?? 900;
-      const streamWindow = Math.min(2000, Math.max(900, genDuration));
-      const pieces = splitIntoPieces(answer.answer, 48);
-      const tick = Math.max(16, Math.round(streamWindow / pieces.length));
-      const streamStart = elapsed + 160;
-
-      pieces.forEach((_, idx) => {
-        timers.current.push(
-          setTimeout(
-            () =>
-              patchMessage(convId, assistantMsg.id, {
-                content: pieces.slice(0, idx + 1).join(""),
-              }),
-            streamStart + tick * (idx + 1),
-          ),
-        );
-      });
-
-      timers.current.push(
-        setTimeout(
-          () => finish(),
-          streamStart + tick * (pieces.length + 1) + 120,
-        ),
-      );
     },
     [activeId, busy, clearTimers, finish, patchMessage],
   );
@@ -206,6 +251,7 @@ export function ChatApp() {
 
   const messages = active?.messages ?? [];
   const isEmpty = messages.length === 0;
+  const offline = health !== null && health.source === "mock";
 
   return (
     <AppShell
@@ -234,9 +280,23 @@ export function ChatApp() {
                   } câu trả lời`}
             </p>
           </div>
-          <span className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-border bg-surface-2 px-2 py-1 text-[11px] text-fg-muted">
+          {/* Nhãn này nói về BACKEND, không nói về hội thoại đang mở — mỗi câu
+              trả lời có nhãn nguồn riêng ngay trên khối trace của nó. */}
+          <span className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-border bg-surface-2 px-2 py-1 text-[11px] text-fg-muted">
             <Sparkles className="size-3.5 text-accent" aria-hidden />
-            Hybrid RAG · dữ liệu mock
+            Hybrid RAG · backend
+            {health ? (
+              <DataSourceBadge
+                source={health.source}
+                title={
+                  health.source === "live"
+                    ? `Backend đang chạy tại ${API_BASE_URL} · ${health.liveStages ?? ""}`
+                    : health.error
+                }
+              />
+            ) : (
+              <span className="text-fg-subtle">đang kiểm tra…</span>
+            )}
           </span>
         </header>
 
@@ -245,7 +305,14 @@ export function ChatApp() {
           className="min-h-0 flex-1 overflow-y-auto scrollbar-slim"
         >
           {isEmpty ? (
-            <Welcome onPick={send} />
+            <>
+              {offline ? (
+                <div className="mx-auto w-full max-w-3xl px-4 pt-4">
+                  <BackendOfflineBanner error={health?.error} />
+                </div>
+              ) : null}
+              <Welcome onPick={send} chunkCount={health?.chunks} />
+            </>
           ) : (
             <div className="mx-auto w-full max-w-3xl space-y-5 px-4 py-6 sm:px-5">
               {messages.map((message) => (

@@ -1,6 +1,8 @@
 import { AppShell } from "@/components/AppShell";
 import { Badge } from "@/components/ui/Badge";
+import { DataSourceBadge } from "@/components/ui/DataSource";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { EVALUATION_SOURCE } from "@/lib/data";
 import { Section } from "@/components/evaluation/common";
 import { ConfigComparison } from "@/components/evaluation/ConfigComparison";
 import { FallbackQueries } from "@/components/evaluation/FallbackQueries";
@@ -31,6 +33,10 @@ export default function EvaluationPage() {
           description={`Bộ ${GOLDEN_TOTAL} cặp Q&A về chính sách Shopee chạy qua ${RETRIEVAL_CONFIGS.length} cấu hình truy xuất, chấm bằng RAGAS với ngưỡng đạt 0.70. Trang này gồm bốn chỉ số tổng quan, bảng so sánh A/B, toàn bộ golden dataset và phân tích ca tệ nhất.`}
           actions={
             <>
+              <DataSourceBadge
+                source={EVALUATION_SOURCE}
+                title="Backend chưa có endpoint đánh giá — toàn bộ số trên trang này lấy từ lib/mock"
+              />
               <Badge tone="accent" mono>
                 {PRIMARY_CONFIG.label}
               </Badge>
@@ -43,6 +49,23 @@ export default function EvaluationPage() {
             </>
           }
         />
+
+        {/* Trang duy nhất còn 100% mock. Nói thẳng ngay đầu trang thay vì để
+            người xem tưởng đây cũng là số đo thật như ba trang kia. */}
+        <div className="mt-4 rounded-xl border border-warn/30 bg-warn-soft px-3 py-2.5">
+          <p className="text-[13px] font-semibold text-warn">
+            Toàn bộ số trên trang này là dữ liệu demo
+          </p>
+          <p className="mt-1 text-[12px] leading-relaxed text-fg-muted">
+            Backend hiện có bốn nhóm endpoint: <code className="font-mono">health</code>,{" "}
+            <code className="font-mono">knowledge</code>,{" "}
+            <code className="font-mono">retrieve</code> và{" "}
+            <code className="font-mono">chat</code> — chưa có endpoint chạy RAGAS.
+            Ba trang Chat, Kho tri thức và Truy xuất đã nối API thật; riêng trang
+            này giữ nguyên bộ số mẫu trong <code className="font-mono">lib/mock</code>{" "}
+            để không bịa kết quả đánh giá.
+          </p>
+        </div>
 
         <div className="mt-8 space-y-10">
           <Section

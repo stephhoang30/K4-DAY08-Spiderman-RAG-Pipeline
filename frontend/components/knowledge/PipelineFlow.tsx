@@ -9,7 +9,8 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { Card, CardHeader } from "@/components/ui/Card";
-import { CORPUS_SOURCE, PIPELINE_CONFIG, TOTAL_CHUNKS } from "@/lib/mock";
+import type { KnowledgeSnapshot } from "@/lib/data";
+import { CORPUS_SOURCE } from "@/lib/mock";
 import { cn } from "@/lib/utils";
 import { formatInt } from "./labels";
 
@@ -28,7 +29,11 @@ interface Stage {
  * Sáu chặng của đường ống nạp dữ liệu, khớp với thư mục thật trong repo:
  * data/landing → Task 3 → data/standardized → Task 4 → embedding → ChromaDB.
  */
-function buildStages(totalChars: number): Stage[] {
+function buildStages(
+  totalChars: number,
+  totalChunks: number,
+  config: KnowledgeSnapshot["config"],
+): Stage[] {
   return [
     {
       id: "landing",
@@ -59,26 +64,26 @@ function buildStages(totalChars: number): Stage[] {
       kind: "process",
       icon: Scissors,
       title: "Task 4 · Chunking",
-      subtitle: `Cửa sổ ${PIPELINE_CONFIG.chunkSize} ký tự, bước ${
-        PIPELINE_CONFIG.chunkSize - PIPELINE_CONFIG.chunkOverlap
+      subtitle: `Cửa sổ ${config.chunkSize} ký tự, bước ${
+        config.chunkSize - config.chunkOverlap
       }`,
-      meta: `overlap ${PIPELINE_CONFIG.chunkOverlap} ký tự`,
+      meta: `overlap tối đa ${config.chunkOverlap} ký tự`,
     },
     {
       id: "embedding",
       kind: "process",
       icon: Sparkles,
       title: "Embedding",
-      subtitle: PIPELINE_CONFIG.embeddingModel,
-      meta: `${PIPELINE_CONFIG.embeddingDim} chiều · đa ngữ`,
+      subtitle: config.embeddingModel,
+      meta: `${config.embeddingDim} chiều · đa ngữ`,
     },
     {
       id: "chroma",
       kind: "store",
       icon: Database,
-      title: PIPELINE_CONFIG.vectorStore,
-      subtitle: `collection ${PIPELINE_CONFIG.collection}`,
-      meta: `≈ ${formatInt(TOTAL_CHUNKS)} vector · ${PIPELINE_CONFIG.similarity}`,
+      title: config.vectorStore,
+      subtitle: `collection ${config.collection}`,
+      meta: `${formatInt(totalChunks)} vector · ${config.distance}`,
     },
   ];
 }
@@ -128,8 +133,16 @@ function StageNode({ stage }: { stage: Stage }) {
  * Trên màn hẹp các chặng tự xuống dòng, mũi tên xoay 90° nên không bao giờ
  * đẩy trang cuộn ngang.
  */
-export function PipelineFlow({ totalChars }: { totalChars: number }) {
-  const stages = buildStages(totalChars);
+export function PipelineFlow({
+  totalChars,
+  totalChunks,
+  config,
+}: {
+  totalChars: number;
+  totalChunks: number;
+  config: KnowledgeSnapshot["config"];
+}) {
+  const stages = buildStages(totalChars, totalChunks, config);
 
   return (
     <Card as="section">

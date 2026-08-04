@@ -96,7 +96,7 @@ export function Composer({
           <kbd className="rounded border border-border bg-surface-2 px-1 font-mono">
             Shift + Enter
           </kbd>{" "}
-          xuống dòng · Dữ liệu demo, không gọi API thật ·{" "}
+          xuống dòng · mỗi câu trả lời có nhãn nguồn riêng ·{" "}
           <span className="font-mono">
             {PIPELINE_CONFIG.embeddingModel} + BM25 + RRF
           </span>

@@ -5,17 +5,28 @@ import type { StepDetail } from "@/lib/types";
 import { Badge } from "@/components/ui/Badge";
 import { ScoreBar, scoreTone } from "@/components/ui/ScoreBar";
 import { ChunkExcerpt, ChunkLabel } from "@/components/ui/ChunkLabel";
-import { getDocument } from "@/lib/mock";
+import { resolveDocument } from "@/lib/chunkRegistry";
 import { cn, formatScore } from "@/lib/utils";
 
 // ---------------------------------------------------------------------------
 // Mảnh dùng chung
 // ---------------------------------------------------------------------------
 
+/**
+ * Hàng tham số của một bước.
+ *
+ * Giá trị 0 / rỗng nghĩa là "API không trả về thông số này" (ví dụ `avgdl` của
+ * BM25 hay số token của prompt) — bỏ hẳn khỏi bảng, đừng hiện số 0 vì người xem
+ * sẽ tưởng đó là kết quả đo được.
+ */
 function ConfigRow({ items }: { items: Array<[string, string | number]> }) {
+  const shown = items.filter(
+    ([, value]) => value !== 0 && value !== "" && value !== "0",
+  );
+  if (shown.length === 0) return null;
   return (
     <dl className="flex flex-wrap gap-x-5 gap-y-1.5 rounded-lg bg-surface-2 px-3 py-2">
-      {items.map(([key, value]) => (
+      {shown.map(([key, value]) => (
         <div key={key} className="flex items-baseline gap-1.5">
           <dt className="text-[11px] text-fg-subtle">{key}</dt>
           <dd className="font-mono text-[11px] font-medium tabular-nums text-fg">
@@ -361,7 +372,7 @@ function FallbackDetail({
           </p>
           <ul className="space-y-1">
             {detail.treeNodes.map((node) => {
-              const doc = getDocument(node.docId);
+              const doc = resolveDocument(node.docId);
               return (
                 <li
                   key={node.id}
@@ -448,6 +459,14 @@ function GenerationDetail({
         <p className="rounded-lg bg-surface-2 px-3 py-2 text-[11px] text-fg-muted">
           Không có chunk nào vượt ngưỡng — LLM được yêu cầu trả lời an toàn, nêu rõ
           phạm vi kho tri thức thay vì suy đoán.
+        </p>
+      ) : detail.slots.length === 0 ? (
+        // Backend không trả thứ tự chunk sau khi reorder, nên không vẽ được sơ đồ
+        // hai cột. Nói thẳng thay vì dựng một sơ đồ trống.
+        <p className="rounded-lg bg-surface-2 px-3 py-2 text-[11px] leading-relaxed text-fg-muted">
+          {detail.chunkCount} chunk được đưa vào prompt. Backend chưa trả về thứ tự
+          sau khi sắp xếp lại (<code className="font-mono">{detail.reorderStrategy}</code>
+          ) nên phần so sánh trước/sau không hiển thị được.
         </p>
       ) : (
         <>

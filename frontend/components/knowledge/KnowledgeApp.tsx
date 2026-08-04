@@ -1,18 +1,21 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import type { KnowledgeDoc } from "@/lib/types";
+import { useEffect, useMemo, useRef, useState } from "react";
+import type { DataSource, KbChunk, KnowledgeDoc } from "@/lib/types";
 import { Card } from "@/components/ui/Card";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Badge } from "@/components/ui/Badge";
 import {
-  DOCUMENTS,
-  PIPELINE_CONFIG,
-  TOTAL_CHARS,
-  getCitedChunks,
-  getDocFileStats,
-  getKbChunks,
-} from "@/lib/mock";
+  BackendOfflineBanner,
+  DataSourceBadge,
+  LoadingNote,
+  Skeleton,
+} from "@/components/ui/DataSource";
+import {
+  loadDocumentChunks,
+  loadKnowledge,
+  type KnowledgeSnapshot,
+} from "@/lib/data";
 import { OverviewStats, sumTotals } from "./OverviewStats";
 import { PipelineFlow } from "./PipelineFlow";
 import {
@@ -30,17 +33,14 @@ import {
 import { ChunkBrowser } from "./ChunkBrowser";
 import { topicLabel } from "./labels";
 
-const charOf = (docId: string) => getDocFileStats(docId)?.charCount ?? 0;
-
 /**
- * Chuỗi tìm kiếm gộp của một tài liệu: metadata + toàn bộ nội dung chunk mẫu,
- * để ô tìm kiếm khớp được cả "tên/nội dung" như yêu cầu.
+ * Chuỗi tìm kiếm gộp của một tài liệu.
+ *
+ * Chỉ dựng từ metadata: nội dung chunk được nạp theo từng tài liệu (mỗi lần chọn
+ * mới gọi `/api/knowledge/chunks`), nên không thể gộp sẵn nội dung của cả 13 tài
+ * liệu vào chuỗi tìm kiếm như hồi còn 100% mock.
  */
-function buildHaystack(doc: KnowledgeDoc): string {
-  const stats = getDocFileStats(doc.id);
-  const chunkText = [...getKbChunks(doc.id), ...getCitedChunks(doc.id)]
-    .map((chunk) => `${chunk.section} ${chunk.content}`)
-    .join(" ");
+function buildHaystack(doc: KnowledgeDoc, standardizedFile: string): string {
   return [
     doc.title,
     doc.fileName,
@@ -48,47 +48,123 @@ function buildHaystack(doc: KnowledgeDoc): string {
     topicLabel(doc.topic),
     doc.summary,
     doc.citation,
-    stats?.standardizedFile ?? "",
-    stats?.sourceTitle ?? "",
-    chunkText,
+    standardizedFile,
   ]
     .join(" ")
     .toLowerCase();
 }
 
-const HAYSTACKS: Record<string, string> = Object.fromEntries(
-  DOCUMENTS.map((doc) => [doc.id, buildHaystack(doc)]),
-);
+function LoadingSkeleton() {
+  return (
+    <div className="mt-6 space-y-6">
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        {[0, 1, 2, 3].map((i) => (
+          <Skeleton key={i} className="h-[4.75rem]" />
+        ))}
+      </div>
+      <Skeleton className="h-40" />
+      <Skeleton className="h-80" />
+    </div>
+  );
+}
 
 export function KnowledgeApp() {
+  const [snapshot, setSnapshot] = useState<KnowledgeSnapshot | null>(null);
+  const [source, setSource] = useState<DataSource>("mock");
+  const [error, setError] = useState<string | undefined>(undefined);
+
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<TypeFilter>("all");
   const [roleFilter, setRoleFilter] = useState<RoleFilter>("all");
   const [sort, setSort] = useState<SortState>({ key: "chunks", dir: "desc" });
-  const [selectedId, setSelectedId] = useState<string>(DOCUMENTS[0].id);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  /**
+   * Chunk của tài liệu đã nạp xong, kèm id của tài liệu đó.
+   * Gói chung một state để suy ra trạng thái "đang tải" bằng phép so sánh
+   * (`docId !== activeDoc.id`) thay vì phải setState ngay trong thân effect.
+   */
+  const [chunkState, setChunkState] = useState<{
+    docId: string;
+    chunks: KbChunk[];
+  } | null>(null);
+  const chunkSeq = useRef(0);
+
+  // Nạp danh sách tài liệu + thống kê corpus một lần khi mở trang.
+  useEffect(() => {
+    let alive = true;
+    loadKnowledge().then((result) => {
+      if (!alive) return;
+      setSnapshot(result.data);
+      setSource(result.source);
+      setError(result.error);
+      setSelectedId((prev) => prev ?? result.data.docs[0]?.id ?? null);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  const statsOf = useMemo(
+    () => (docId: string) => snapshot?.fileStats[docId],
+    [snapshot],
+  );
+
+  const haystacks = useMemo(() => {
+    if (!snapshot) return {} as Record<string, string>;
+    return Object.fromEntries(
+      snapshot.docs.map((doc) => [
+        doc.id,
+        buildHaystack(doc, snapshot.fileStats[doc.id]?.standardizedFile ?? ""),
+      ]),
+    );
+  }, [snapshot]);
 
   const filtered = useMemo(() => {
+    if (!snapshot) return [];
     const needle = search.trim().toLowerCase();
-    return DOCUMENTS.filter((doc) => {
+    return snapshot.docs.filter((doc) => {
       if (typeFilter !== "all" && doc.type !== typeFilter) return false;
       if (roleFilter !== "all" && doc.customerRole !== roleFilter) return false;
-      if (needle && !HAYSTACKS[doc.id].includes(needle)) return false;
+      if (needle && !(haystacks[doc.id] ?? "").includes(needle)) return false;
       return true;
     });
-  }, [search, typeFilter, roleFilter]);
+  }, [snapshot, search, typeFilter, roleFilter, haystacks]);
 
   const sorted = useMemo(() => {
     const factor = sort.dir === "asc" ? 1 : -1;
-    return [...filtered].sort(
-      (a, b) => compareDocs(a, b, sort.key, getDocFileStats) * factor,
-    );
-  }, [filtered, sort]);
+    return [...filtered].sort((a, b) => compareDocs(a, b, sort.key, statsOf) * factor);
+  }, [filtered, sort, statsOf]);
 
-  const totals = useMemo(() => sumTotals(filtered, charOf), [filtered]);
+  const totals = useMemo(
+    () => sumTotals(filtered, (docId) => statsOf(docId)?.charCount ?? 0),
+    [filtered, statsOf],
+  );
 
   // Tài liệu đang xem phải nằm trong kết quả lọc; nếu bị lọc mất thì lấy dòng đầu.
   const activeDoc: KnowledgeDoc | null =
     sorted.find((doc) => doc.id === selectedId) ?? sorted[0] ?? null;
+
+  // Chunk nạp riêng theo từng tài liệu — 206 chunk mà tải hết một lượt thì thừa.
+  const activeDocId = activeDoc?.id ?? null;
+  const activeFileName = activeDoc?.fileName ?? null;
+  useEffect(() => {
+    if (!activeDocId || !activeFileName) return;
+    let alive = true;
+    const mine = (chunkSeq.current += 1);
+    loadDocumentChunks(activeFileName, activeDocId, source === "live").then(
+      (result) => {
+        if (!alive || mine !== chunkSeq.current) return;
+        setChunkState({ docId: activeDocId, chunks: result.data });
+      },
+    );
+    return () => {
+      alive = false;
+    };
+  }, [activeDocId, activeFileName, source]);
+
+  const chunksReady = chunkState !== null && chunkState.docId === activeDocId;
+  const chunks = chunksReady ? chunkState.chunks : [];
 
   function handleSort(key: SortKey) {
     setSort((prev) =>
@@ -104,27 +180,64 @@ export function KnowledgeApp() {
     setRoleFilter("all");
   }
 
+  if (!snapshot) {
+    return (
+      <div className="mx-auto w-full max-w-6xl px-5 py-8 sm:px-8">
+        <PageHeader
+          eyebrow="Task 3 & Task 4"
+          title="Kho tri thức"
+          description="Đang đọc thống kê corpus từ backend."
+        />
+        <LoadingNote className="mt-4" label="Đang gọi GET /api/knowledge/…" />
+        <LoadingSkeleton />
+      </div>
+    );
+  }
+
+  const legalCount = snapshot.docs.filter((doc) => doc.type === "legal").length;
+  const newsCount = snapshot.docs.filter((doc) => doc.type === "news").length;
+
   return (
     <div className="mx-auto w-full max-w-6xl px-5 py-8 sm:px-8">
       <PageHeader
         eyebrow="Task 3 & Task 4"
         title="Kho tri thức"
-        description="13 tài liệu hỗ trợ khách hàng của Shopee Việt Nam đã được chuẩn hoá, cắt chunk và index vào ChromaDB. Lọc bảng để xem thành phần của kho, chọn một tài liệu để soi từng chunk."
+        description={`${snapshot.totals.documents} tài liệu hỗ trợ khách hàng của Shopee Việt Nam đã được chuẩn hoá, cắt thành ${snapshot.totals.chunks} chunk và index vào vector store. Lọc bảng để xem thành phần của kho, chọn một tài liệu để soi từng chunk.`}
         actions={
           <>
-            <Badge tone="legal">5 legal</Badge>
-            <Badge tone="news">8 news</Badge>
+            <DataSourceBadge
+              source={source}
+              title={
+                source === "live"
+                  ? `Đọc trực tiếp từ ${snapshot.config.collection} qua GET /api/knowledge/…`
+                  : error
+              }
+            />
+            <Badge tone="legal">{legalCount} legal</Badge>
+            <Badge tone="news">{newsCount} news</Badge>
             <Badge mono>
-              {PIPELINE_CONFIG.chunkSize}/{PIPELINE_CONFIG.chunkOverlap}
+              {snapshot.config.chunkSize}/{snapshot.config.chunkOverlap}
             </Badge>
           </>
         }
       />
 
-      <div className="mt-6 space-y-6">
-        <OverviewStats totals={totals} />
+      {source === "mock" ? (
+        <BackendOfflineBanner error={error} className="mt-4" />
+      ) : null}
 
-        <PipelineFlow totalChars={TOTAL_CHARS} />
+      <div className="mt-6 space-y-6">
+        <OverviewStats
+          totals={totals}
+          all={snapshot.totals}
+          config={snapshot.config}
+        />
+
+        <PipelineFlow
+          totalChars={snapshot.totals.chars}
+          totalChunks={snapshot.totals.chunks}
+          config={snapshot.config}
+        />
 
         <Card as="section">
           <DocumentFilters
@@ -135,12 +248,12 @@ export function KnowledgeApp() {
             role={roleFilter}
             onRoleChange={setRoleFilter}
             resultCount={filtered.length}
-            totalCount={DOCUMENTS.length}
+            totalCount={snapshot.docs.length}
             onReset={handleReset}
           />
           <DocumentTable
             docs={sorted}
-            statsOf={getDocFileStats}
+            statsOf={statsOf}
             sort={sort}
             onSort={handleSort}
             selectedId={activeDoc?.id ?? null}
@@ -150,8 +263,12 @@ export function KnowledgeApp() {
 
         <ChunkBrowser
           doc={activeDoc}
-          docs={sorted.length > 0 ? sorted : DOCUMENTS}
+          docs={sorted.length > 0 ? sorted : snapshot.docs}
           onSelect={setSelectedId}
+          chunks={chunks}
+          stats={activeDoc ? statsOf(activeDoc.id) : undefined}
+          config={snapshot.config}
+          loading={!chunksReady}
         />
       </div>
     </div>

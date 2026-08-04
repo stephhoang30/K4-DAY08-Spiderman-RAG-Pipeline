@@ -88,11 +88,19 @@ export function MessageItem({ message }: { message: ChatMessage }) {
             streaming={message.streaming}
             revealedSteps={message.revealedSteps}
             usedFallback={message.usedFallback}
+            source={message.source}
           />
         ) : null}
 
         {showTyping ? (
-          <TypingDots />
+          <div className="space-y-1.5">
+            <TypingDots />
+            {message.loadingNote ? (
+              <p className="text-[11.5px] leading-relaxed text-fg-subtle">
+                {message.loadingNote}
+              </p>
+            ) : null}
+          </div>
         ) : message.content ? (
           <div
             className={cn(
@@ -114,11 +122,19 @@ export function MessageItem({ message }: { message: ChatMessage }) {
         ) : null}
 
         {!message.streaming && message.content ? (
-          <div className="flex items-center gap-1 pl-0.5">
+          <div className="flex flex-wrap items-center gap-1 pl-0.5">
             <CopyButton text={message.content} />
             {message.usedFallback ? (
               <span className="rounded-md border border-warn/30 bg-warn-soft px-1.5 py-0.5 text-[10px] font-medium text-warn">
                 Trả lời qua PageIndex Vectorless
+              </span>
+            ) : null}
+            {/* Nói rõ khi câu trả lời là mock, kèm lý do — người xem không được
+                phép nhầm câu trả lời demo thành câu trả lời do backend sinh ra. */}
+            {message.source === "mock" ? (
+              <span className="text-[10.5px] text-fg-subtle">
+                Câu trả lời demo
+                {message.sourceError ? ` · ${message.sourceError}` : null}
               </span>
             ) : null}
           </div>

@@ -5,6 +5,7 @@ import type { RetrievalRun, RetrievalStage, RetrievalStageItem } from "@/lib/typ
 import { Card } from "@/components/ui/Card";
 import { ChunkLabel } from "@/components/ui/ChunkLabel";
 import { ScoreBar, scoreTone } from "@/components/ui/ScoreBar";
+import { WiringBadge } from "@/components/ui/DataSource";
 import { cn, formatMs } from "@/lib/utils";
 import { chunkKeyOf, type ChunkKey } from "./chunkKeys";
 
@@ -129,14 +130,19 @@ function StageColumn({
             </span>
             <span className="truncate">{stage.title}</span>
           </h3>
-          <span className="inline-flex shrink-0 items-center gap-1 rounded-md border border-border bg-surface-2 px-1.5 py-0.5 font-mono text-[10px] tabular-nums text-fg-muted">
-            <Timer className="size-3" aria-hidden />
-            {formatMs(stage.durationMs)}
+          <span className="flex shrink-0 items-center gap-1">
+            {/* Nhãn đấu nối riêng của tầng này — Task nào còn mock thì hiện ở
+                đúng cột đó, không gộp chung thành một nhãn cho cả trang. */}
+            <WiringBadge wiring={stage.wiring} note={stage.note} />
+            <span className="inline-flex items-center gap-1 rounded-md border border-border bg-surface-2 px-1.5 py-0.5 font-mono text-[10px] tabular-nums text-fg-muted">
+              <Timer className="size-3" aria-hidden />
+              {formatMs(stage.durationMs)}
+            </span>
           </span>
         </div>
         <p
           className="mt-0.5 truncate font-mono text-[10px] text-fg-subtle"
-          title={stage.subtitle}
+          title={stage.note ?? stage.subtitle}
         >
           {stage.subtitle}
         </p>

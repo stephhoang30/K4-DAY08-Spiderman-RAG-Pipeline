@@ -3,8 +3,10 @@
 import { ChevronRight, Loader2, Timer } from "lucide-react";
 import { useId, useState } from "react";
 import type { PipelineStep, PipelineStepStatus } from "@/lib/types";
+import type { DataSource } from "@/lib/data";
 import { STATUS_CLASS, STATUS_LABEL, STEP_ICON } from "./stepMeta";
 import { StepDetails } from "./StepDetails";
+import { DataSourceBadge, WiringBadge } from "@/components/ui/DataSource";
 import { cn, formatMs } from "@/lib/utils";
 
 function StatusBadge({ status }: { status: PipelineStepStatus }) {
@@ -82,6 +84,9 @@ function StepRow({
                 {step.title}
               </span>
               <StatusBadge status={status} />
+              {/* Nhãn riêng cho từng bước: tầng nào chạy code thật, tầng nào
+                  còn mock. Một bước mock không được phép trông như live. */}
+              <WiringBadge wiring={step.wiring} note={step.note} />
             </span>
             <span className="mt-0.5 flex flex-wrap items-center gap-x-2 text-[11px] text-fg-subtle">
               <span className="truncate font-mono">{step.subtitle}</span>
@@ -123,12 +128,15 @@ export function PipelineTrace({
   streaming = false,
   revealedSteps,
   usedFallback = false,
+  source,
 }: {
   steps: PipelineStep[];
   totalMs: number;
   streaming?: boolean;
   revealedSteps?: number;
   usedFallback?: boolean;
+  /** Toàn bộ trace này đến từ backend thật hay từ mock. */
+  source?: DataSource;
 }) {
   const [open, setOpen] = useState(false);
   const panelId = useId();
@@ -174,6 +182,7 @@ export function PipelineTrace({
             </>
           )}
         </span>
+        {source ? <DataSourceBadge source={source} className="shrink-0" /> : null}
         {usedFallback && !streaming ? (
           <span className="shrink-0 rounded-md border border-warn/30 bg-warn-soft px-1.5 py-0.5 text-[10px] font-medium text-warn">
             PageIndex fallback

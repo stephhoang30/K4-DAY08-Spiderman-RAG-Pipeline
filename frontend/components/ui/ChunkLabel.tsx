@@ -1,4 +1,4 @@
-import { getChunk, getDocument } from "@/lib/mock";
+import { resolveChunk, resolveDocument } from "@/lib/chunkRegistry";
 import { cn, truncate } from "@/lib/utils";
 import { DocTypeBadge } from "./Badge";
 
@@ -17,8 +17,8 @@ export function ChunkLabel({
   showSection?: boolean;
   className?: string;
 }) {
-  const chunk = getChunk(chunkId);
-  const doc = chunk ? getDocument(chunk.docId) : undefined;
+  const chunk = resolveChunk(chunkId);
+  const doc = chunk ? resolveDocument(chunk.docId) : undefined;
 
   if (!chunk || !doc) {
     return (
@@ -53,7 +53,7 @@ export function ChunkExcerpt({
   max?: number;
   className?: string;
 }) {
-  const chunk = getChunk(chunkId);
+  const chunk = resolveChunk(chunkId);
   if (!chunk) return null;
   return (
     <p className={cn("text-[11px] leading-relaxed text-fg-muted", className)}>

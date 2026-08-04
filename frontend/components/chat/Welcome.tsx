@@ -4,25 +4,38 @@ import { ArrowUpRight, Database, Layers, ShieldAlert } from "lucide-react";
 import { LogoMark } from "@/components/Logo";
 import { PIPELINE_CONFIG, SUGGESTED_QUESTIONS, TOTAL_CHUNKS } from "@/lib/mock";
 
-const HIGHLIGHTS = [
-  {
-    icon: Database,
-    label: "13 tài liệu",
-    value: `${TOTAL_CHUNKS} chunk · ${PIPELINE_CONFIG.chunkSize}/${PIPELINE_CONFIG.chunkOverlap}`,
-  },
-  {
-    icon: Layers,
-    label: "Hybrid retrieval",
-    value: `bge-m3 + BM25 → RRF k=${PIPELINE_CONFIG.rrfK}`,
-  },
-  {
-    icon: ShieldAlert,
-    label: "Fallback",
-    value: `PageIndex khi cosine < ${PIPELINE_CONFIG.fallbackThreshold}`,
-  },
-];
+/**
+ * @param chunkCount Số chunk backend báo qua `/api/health`. Không có (backend
+ *   tắt) thì dùng số của bộ mock.
+ */
+function highlights(chunkCount?: number) {
+  return [
+    {
+      icon: Database,
+      label: "13 tài liệu",
+      value: `${chunkCount ?? TOTAL_CHUNKS} chunk · ${PIPELINE_CONFIG.chunkSize}/${PIPELINE_CONFIG.chunkOverlap}`,
+    },
+    {
+      icon: Layers,
+      label: "Hybrid retrieval",
+      value: `bge-m3 + BM25 → RRF k=${PIPELINE_CONFIG.rrfK}`,
+    },
+    {
+      icon: ShieldAlert,
+      label: "Fallback",
+      value: `PageIndex khi cosine < ${PIPELINE_CONFIG.fallbackThreshold}`,
+    },
+  ];
+}
 
-export function Welcome({ onPick }: { onPick: (q: string) => void }) {
+export function Welcome({
+  onPick,
+  chunkCount,
+}: {
+  onPick: (q: string) => void;
+  chunkCount?: number;
+}) {
+  const HIGHLIGHTS = highlights(chunkCount);
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col items-center px-4 py-10 sm:py-16">
       <LogoMark className="size-14 sm:size-16" />
